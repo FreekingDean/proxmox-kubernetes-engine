@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+service ClusterService {
+  rpc GetCluster(GetClusterRequest) returns (Cluster) {
+    option (google.api.http) = {
+      get: "/v1/{name=clusters/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+  rpc ListClusters(ListClustersRequest) returns (ListClustersResponse) {
+    option (google.api.http) = {
+      get: "/v1/clusters"
+    };
+  }
+  rpc CreateCluster(CreateClusterRequest) returns(Cluster) {
+    option (google.api.http) = {
+      post: "/v1/clusters"
+      body: "cluster"
+    };
+    option (google.api.method_signature) = "cluster";
+  }
+  rpc UpdateCluster(UpdateClusterRequest) returns(Cluster) {
+    option (google.api.http) = {
+      patch: "/v1/{name=clusters/*}"
+      body: "cluster"
+    };
+    option (google.api.method_signature) = "name,cluster";
+  }
+  rpc DeleteCluster(DeleteClusterRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=clusters/*}"
+    };
+    option (google.api.method_signature) = "name,cluster";
+  }
+}
+
+message Cluster {
+  string name = 1;
+  string version = 2;
+
+  repeated NodePool nodePools = 3;
+}
+
+message NodePoolAssignment {
+  string name = 1;
+  NodePool nodepool = 2;
+  Cluster cluster = 3;
+  string role = 4;
+}
+
+message NodePool {
+  string name = 1;
+  string image = 2;
+  int32 memory = 3;
+  int32 cpus = 4;
+
+  repeated Machine machines = 5;
+}
+
+message Machine {
+  string name = 1;
+  string image = 2;
+  int32 memory = 3;
+  int32 cpus = 4;
+  status status = 5;
+}
+
+enum status {
+  unknown = 0;
+  starting = 1;
+  running = 2;
+  stopping = 3;
+  stopped = 4;
+  error = 5;
+}

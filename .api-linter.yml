@@ -1,0 +1,4 @@
+---
+- included_paths:
+    - 'protos/**/*.proto'
+  disabled_rules: []

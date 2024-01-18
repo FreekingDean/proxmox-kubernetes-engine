@@ -8,7 +8,7 @@ cd protos
 all=$(find -name *.proto)
 api-linter \
     --descriptor-set-in "${descriptors_path}" \
-    --config ../api-linter.yml \
+    --config ../.api-linter.yml \
     ${all}
 
 rm -r "${temp_dir}"

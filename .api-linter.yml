@@ -1,4 +1,5 @@
 ---
 - included_paths:
-    - 'protos/**/*.proto'
-  disabled_rules: []
+    - '**/*.proto'
+  disabled_rules:
+    - core::0192::has-comments

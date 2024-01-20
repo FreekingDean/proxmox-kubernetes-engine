@@ -1,0 +1,4 @@
+proxmox-kubernetes-engine
+bin/*
+db/*
+.env

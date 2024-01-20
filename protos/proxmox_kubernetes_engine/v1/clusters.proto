@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/field_mask.proto";
+
+package proxmox_kubernetes_engine.v1;
+
+option java_multiple_files = true;
+option java_package = "com.proxmox_kubernetes_engine.v1";
+option java_outer_classname = "ClustersProto";
+option go_package = "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1";
+
+service ClusterService {
+    rpc GetCluster(GetClusterRequest) returns (Cluster) {
+    option (google.api.http) = {
+      get: "/v1/{name=clusters/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+    rpc ListClusters(ListClustersRequest) returns (ListClustersResponse) {
+    option (google.api.http) = {
+      get: "/v1/clusters"
+    };
+  }
+    rpc CreateCluster(CreateClusterRequest) returns(Cluster) {
+    option (google.api.http) = {
+      post: "/v1/clusters"
+      body: "cluster"
+    };
+    option (google.api.method_signature) = "cluster,cluster_id";
+  }
+    rpc UpdateCluster(UpdateClusterRequest) returns(Cluster) {
+    option (google.api.http) = {
+      patch: "/v1/{cluster.name=clusters/*}"
+      body: "cluster"
+    };
+    option (google.api.method_signature) = "cluster,update_mask";
+  }
+    rpc DeleteCluster(DeleteClusterRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=clusters/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+}
+
+message GetClusterRequest {
+  string name = 1 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/Cluster"
+  }];
+}
+
+message ListClustersRequest {
+  int32 page_size = 1 [ (google.api.field_behavior) = OPTIONAL ];
+  string page_token = 2 [ (google.api.field_behavior) = OPTIONAL ];
+}
+
+message ListClustersResponse {
+  repeated Cluster clusters = 1;
+  string next_page_token = 2;
+}
+
+message CreateClusterRequest {
+  string cluster_id = 1 [ (google.api.field_behavior) = REQUIRED ];
+  Cluster cluster = 2 [ (google.api.field_behavior) = REQUIRED ];
+}
+
+message UpdateClusterRequest {
+  Cluster cluster = 1 [ (google.api.field_behavior) = REQUIRED ];
+  google.protobuf.FieldMask update_mask = 2 [ (google.api.field_behavior) = REQUIRED ];
+}
+
+message DeleteClusterRequest {
+  string name = 1 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/Cluster"
+  }];
+}
+
+message Cluster {
+  option (google.api.resource) = {
+    type: "proxomx-kubernetes-engine.io/Cluster"
+    pattern: "clusters/{cluster}"
+    singular: "cluster"
+    plural: "clusters"
+  };
+  string name = 1 [
+  (google.api.field_behavior) = IDENTIFIER,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/Cluster"
+  }];
+  string version = 2 [ (google.api.field_behavior) = REQUIRED ];
+}
+

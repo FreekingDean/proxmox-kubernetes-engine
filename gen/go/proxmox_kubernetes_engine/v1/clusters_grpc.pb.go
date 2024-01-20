@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: proxmox_kubernetes_engine/v1/service.proto
+// source: proxmox_kubernetes_engine/v1/clusters.proto
 
 package v1
 
@@ -31,15 +31,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClusterServiceClient interface {
-	// Retreive cluster
 	GetCluster(ctx context.Context, in *GetClusterRequest, opts ...grpc.CallOption) (*Cluster, error)
-	// List all clusters
 	ListClusters(ctx context.Context, in *ListClustersRequest, opts ...grpc.CallOption) (*ListClustersResponse, error)
-	// Create a cluster
 	CreateCluster(ctx context.Context, in *CreateClusterRequest, opts ...grpc.CallOption) (*Cluster, error)
-	// Update the cluster
 	UpdateCluster(ctx context.Context, in *UpdateClusterRequest, opts ...grpc.CallOption) (*Cluster, error)
-	// Delete said cluster
 	DeleteCluster(ctx context.Context, in *DeleteClusterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -100,15 +95,10 @@ func (c *clusterServiceClient) DeleteCluster(ctx context.Context, in *DeleteClus
 // All implementations must embed UnimplementedClusterServiceServer
 // for forward compatibility
 type ClusterServiceServer interface {
-	// Retreive cluster
 	GetCluster(context.Context, *GetClusterRequest) (*Cluster, error)
-	// List all clusters
 	ListClusters(context.Context, *ListClustersRequest) (*ListClustersResponse, error)
-	// Create a cluster
 	CreateCluster(context.Context, *CreateClusterRequest) (*Cluster, error)
-	// Update the cluster
 	UpdateCluster(context.Context, *UpdateClusterRequest) (*Cluster, error)
-	// Delete said cluster
 	DeleteCluster(context.Context, *DeleteClusterRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedClusterServiceServer()
 }
@@ -264,5 +254,5 @@ var ClusterService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proxmox_kubernetes_engine/v1/service.proto",
+	Metadata: "proxmox_kubernetes_engine/v1/clusters.proto",
 }

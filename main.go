@@ -1,5 +1,7 @@
 package main
 
+import "github.com/FreekingDean/proxmox-kubernetes-engine/cmd"
+
 func main() {
-	server.New().Run()
+	cmd.RootCmd().Execute()
 }

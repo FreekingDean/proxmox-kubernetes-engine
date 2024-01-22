@@ -79,7 +79,7 @@ func (c *Client) FindAvailableNode(ctx context.Context, group string, cpus, memo
 	}
 
 	if foundNode == "" {
-		return "", fmt.Errorf("Could not find available node to schedule machine on")
+		return "", fmt.Errorf("Could not find available node to schedule node on")
 	}
 	return foundNode, nil
 }

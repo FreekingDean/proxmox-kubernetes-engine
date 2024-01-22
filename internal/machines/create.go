@@ -9,26 +9,26 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (s *Service) CreateMachine(ctx context.Context, nodePool *v1.NodePool) error {
-	node, err := s.proxmox.FindAvailableNode(ctx, nodePool.Group, int(nodePool.Memory), int(nodePool.Cpus))
+func (s *Service) CreateMachine(ctx context.Context, machinePool *v1.MachinePool) error {
+	node, err := s.proxmox.FindAvailableNode(ctx, machinePool.Group, int(machinePool.Memory), int(machinePool.Cpus))
 	if err != nil {
-		return errors.Wrap(err, "couldnt find a node")
+		return errors.Wrap(err, "couldnt find a machine")
 	}
 
-	nprn := &v1.NodePoolResourceName{}
-	err = nprn.UnmarshalString(nodePool.Name)
+	nprn := &v1.MachinePoolResourceName{}
+	err = nprn.UnmarshalString(machinePool.Name)
 	if err != nil {
-		return errors.Wrap(err, "couldnt parse nodepool name")
+		return errors.Wrap(err, "couldnt parse machinepool name")
 	}
 	rn := &v1.MachineResourceName{
-		NodePool: nprn.NodePool,
-		Machine:  util.UniqueName(6),
+		MachinePool: nprn.MachinePool,
+		Machine:     util.UniqueName(6),
 	}
 	machine := &v1.Machine{
 		Name:        rn.String(),
 		CurrentNode: string(node),
-		Memory:      nodePool.Memory,
-		Cpus:        nodePool.Cpus,
+		Memory:      machinePool.Memory,
+		Cpus:        machinePool.Cpus,
 	}
 
 	err = s.store.CreateMachine(ctx, machine)
@@ -36,6 +36,6 @@ func (s *Service) CreateMachine(ctx context.Context, nodePool *v1.NodePool) erro
 		return errors.Wrap(err, "couldnt create machine in store")
 	}
 
-	fmt.Println(node)
+	fmt.Println(machine)
 	return nil
 }

@@ -2,7 +2,7 @@ package models
 
 import v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
 
-type NodePool struct {
+type MachinePool struct {
 	ID     string `db:"id" fieldtag:"pk"`
 	Name   string `db:"name"`
 	Memory int    `db:"memory"`
@@ -10,18 +10,18 @@ type NodePool struct {
 	Group  string `db:"group_name"`
 }
 
-func (nodePool *NodePool) FromAPI(np *v1.NodePool) error {
-	rn := v1.NodePoolResourceName{}
+func (machinePool *MachinePool) FromAPI(np *v1.MachinePool) error {
+	rn := v1.MachinePoolResourceName{}
 	err := rn.UnmarshalString(np.Name)
 	if err != nil {
 		return err
 	}
 
-	nodePool.ID = rn.NodePool
-	nodePool.Name = np.Name
-	nodePool.Memory = int(np.Memory)
-	nodePool.CPUs = int(np.Cpus)
-	nodePool.Group = np.Group
+	machinePool.ID = rn.MachinePool
+	machinePool.Name = np.Name
+	machinePool.Memory = int(np.Memory)
+	machinePool.CPUs = int(np.Cpus)
+	machinePool.Group = np.Group
 
 	return nil
 }

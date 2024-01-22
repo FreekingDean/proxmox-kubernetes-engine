@@ -9,8 +9,8 @@ type Machine struct {
 	Memory     int    `db:"memory"`
 	State      string `db:"state"`
 	Group      string `db:"group_name"`
-	Node       string `db:"node"`
-	NodePoolID string `db:"node_pool_id"`
+	Machine       string `db:"machine"`
+	MachinePoolID string `db:"machine_pool_id"`
 }
 
 func (m *Machine) FromAPI(machine *v1.Machine) error {
@@ -25,14 +25,14 @@ func (m *Machine) FromAPI(machine *v1.Machine) error {
 	m.Memory = int(machine.Memory)
 	m.State = machine.State.String()
 	m.Group = machine.Group
-	m.NodePoolID = rn.NodePool
+	m.MachinePoolID = rn.MachinePool
 	return nil
 }
 
 func (m *Machine) ToAPI() (*v1.Machine, error) {
 	rn := v1.MachineResourceName{
 		Machine:  m.ID,
-		NodePool: m.NodePoolID,
+		MachinePool: m.MachinePoolID,
 	}
 	name, err := rn.MarshalString()
 	return &v1.Machine{

@@ -1,4 +1,4 @@
-package nodepools
+package machinepools
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 type Service struct {
-	v1.UnimplementedNodePoolServiceServer
+	v1.UnimplementedMachinePoolServiceServer
 
 	Logger         logger.Logger
 	MachineService *machines.Service
@@ -38,7 +38,7 @@ func New(p ServiceParams) *Service {
 func Register(lc fx.Lifecycle, s *Service, g *grpc.Server) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			v1.RegisterNodePoolServiceServer(g, s)
+			v1.RegisterMachinePoolServiceServer(g, s)
 			return nil
 		},
 	})

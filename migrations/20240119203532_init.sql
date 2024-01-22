@@ -6,7 +6,7 @@ CREATE TABLE clusters(
   version TEXT
 );
 
-CREATE TABLE node_pools(
+CREATE TABLE machine_pools(
   id TEXT PRIMARY KEY,
   name TEXT,
   memory INTEGER,
@@ -14,13 +14,13 @@ CREATE TABLE node_pools(
   group_name TEXT
 );
 
-CREATE TABLE node_pool_assignments(
+CREATE TABLE machine_pool_assignments(
   id INTEGER PRIMARY KEY,
   role TEXT,
   cluster_id TEXT,
-  node_pool_id TEXT,
+  machine_pool_id TEXT,
   FOREIGN KEY(cluster_id) REFERENCES clusters(id),
-  FOREIGN KEY(node_pool_id) REFERENCES node_pools(id)
+  FOREIGN KEY(machine_pool_id) REFERENCES machine_pools(id)
 );
 
 CREATE TABLE machines(
@@ -28,18 +28,18 @@ CREATE TABLE machines(
   name TEXT,
   memory INTEGER,
   cpus INTEGER,
-  node_pool_id TEXT,
+  machine_pool_id TEXT,
   group_name TEXT,
-  node TEXT,
+  machine TEXT,
   state Text,
-  FOREIGN KEY(node_pool_id) REFERENCES node_pools(id)
+  FOREIGN KEY(machine_pool_id) REFERENCES machine_pools(id)
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE clusters;
-DROP TABLE node_pools;
-DROP TABLE node_pool_assignments;
+DROP TABLE machine_pools;
+DROP TABLE machine_pool_assignments;
 DROP TABLE machines;
 -- +goose StatementEnd

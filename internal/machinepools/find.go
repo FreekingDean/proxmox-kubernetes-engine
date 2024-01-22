@@ -1,4 +1,4 @@
-package nodepools
+package machinepools
 
 import (
 	"context"
@@ -7,18 +7,18 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *Service) DeleteNodePool(ctx context.Context, req *v1.DeleteNodePoolRequest) (*emptypb.Empty, error) {
+func (s *Service) DeleteMachinePool(ctx context.Context, req *v1.DeleteMachinePoolRequest) (*emptypb.Empty, error) {
 	return nil, nil
 }
 
-func (s *Service) ListNodePools(ctx context.Context, req *v1.ListNodePoolsRequest) (*v1.ListNodePoolsResponse, error) {
+func (s *Service) ListMachinePools(ctx context.Context, req *v1.ListMachinePoolsRequest) (*v1.ListMachinePoolsResponse, error) {
 	return nil, nil
 }
 
-func (s *Service) GetNodePool(ctx context.Context, req *v1.GetNodePoolRequest) (*v1.NodePool, error) {
+func (s *Service) GetMachinePool(ctx context.Context, req *v1.GetMachinePoolRequest) (*v1.MachinePool, error) {
 	return nil, nil
 }
 
-func (s *Service) UpdateNodePool(ctx context.Context, req *v1.UpdateNodePoolRequest) (*v1.NodePool, error) {
+func (s *Service) UpdateMachinePool(ctx context.Context, req *v1.UpdateMachinePoolRequest) (*v1.MachinePool, error) {
 	return nil, nil
 }

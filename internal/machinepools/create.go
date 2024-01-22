@@ -1,4 +1,4 @@
-package nodepools
+package machinepools
 
 import (
 	"context"
@@ -9,16 +9,16 @@ import (
 	"google.golang.org/genproto/googleapis/api/annotations"
 )
 
-func (s *Service) CreateNodePool(ctx context.Context, req *v1.CreateNodePoolRequest) (*v1.NodePool, error) {
+func (s *Service) CreateMachinePool(ctx context.Context, req *v1.CreateMachinePoolRequest) (*v1.MachinePool, error) {
 	err := fieldbehavior.ValidateRequiredFields(req)
 	if err != nil {
 		return nil, err
 	}
 	fieldbehavior.ClearFields(req, annotations.FieldBehavior_OUTPUT_ONLY)
 
-	err = s.store.CreateNodePool(ctx, req.NodePoolId, req.NodePool)
+	err = s.store.CreateMachinePool(ctx, req.MachinePoolId, req.MachinePool)
 	if err != nil {
-		return nil, errors.Wrap(err, "couldnt create node pool in store")
+		return nil, errors.Wrap(err, "couldnt create machine pool in store")
 	}
-	return req.NodePool, err
+	return req.MachinePool, err
 }

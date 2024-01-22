@@ -1,4 +1,4 @@
-package nodepoolassignments
+package machinepoolassignments
 
 import (
 	"context"
@@ -8,29 +8,29 @@ import (
 )
 
 type Service struct {
-	v1.UnimplementedNodePoolAssignmentServiceServer
+	v1.UnimplementedMachinePoolAssignmentServiceServer
 }
 
 func NewService() *Service {
 	return &Service{}
 }
 
-func (s *Service) CreateNodePoolAssignment(ctx context.Context, req *v1.CreateNodePoolAssignmentRequest) (*v1.NodePoolAssignment, error) {
+func (s *Service) CreateMachinePoolAssignment(ctx context.Context, req *v1.CreateMachinePoolAssignmentRequest) (*v1.MachinePoolAssignment, error) {
 	return nil, nil
 }
 
-func (s *Service) DeleteNodePoolAssignment(ctx context.Context, req *v1.DeleteNodePoolAssignmentRequest) (*emptypb.Empty, error) {
+func (s *Service) DeleteMachinePoolAssignment(ctx context.Context, req *v1.DeleteMachinePoolAssignmentRequest) (*emptypb.Empty, error) {
 	return nil, nil
 }
 
-func (s *Service) ListNodePoolAssignments(ctx context.Context, req *v1.ListNodePoolAssignmentsRequest) (*v1.ListNodePoolAssignmentsResponse, error) {
+func (s *Service) ListMachinePoolAssignments(ctx context.Context, req *v1.ListMachinePoolAssignmentsRequest) (*v1.ListMachinePoolAssignmentsResponse, error) {
 	return nil, nil
 }
 
-func (s *Service) GetNodePoolAssignment(ctx context.Context, req *v1.GetNodePoolAssignmentRequest) (*v1.NodePoolAssignment, error) {
+func (s *Service) GetMachinePoolAssignment(ctx context.Context, req *v1.GetMachinePoolAssignmentRequest) (*v1.MachinePoolAssignment, error) {
 	return nil, nil
 }
 
-func (s *Service) UpdateNodePoolAssignment(ctx context.Context, req *v1.UpdateNodePoolAssignmentRequest) (*v1.NodePoolAssignment, error) {
+func (s *Service) UpdateMachinePoolAssignment(ctx context.Context, req *v1.UpdateMachinePoolAssignmentRequest) (*v1.MachinePoolAssignment, error) {
 	return nil, nil
 }

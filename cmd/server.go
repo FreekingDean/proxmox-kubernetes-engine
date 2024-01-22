@@ -10,7 +10,7 @@ import (
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/grpc"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/logger"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/machines"
-	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/nodepools"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/machinepools"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/proxmox"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
 )
@@ -26,9 +26,9 @@ func RunServer() {
 		proxmox.Module,
 		fx.Provide(grpc.New),
 		fx.Provide(machines.New),
-		fx.Provide(nodepools.New),
+		fx.Provide(machinepools.New),
 		fx.Invoke(machines.Register),
-		fx.Invoke(nodepools.Register),
+		fx.Invoke(machinepools.Register),
 		fx.Invoke(grpc.Run),
 	)
 	app.Run()

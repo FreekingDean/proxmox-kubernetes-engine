@@ -2,6 +2,7 @@ package machines
 
 import (
 	"context"
+	"fmt"
 
 	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
 )
@@ -10,9 +11,12 @@ func (s *Service) ListMachines(ctx context.Context, req *v1.ListMachinesRequest)
 	rn := v1.NodePoolResourceName{}
 	err := rn.UnmarshalString(req.Parent)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error parsing resource name: %w", err)
 	}
-	machines, nextToken, err := s.machinestore.List(ctx, rn)
+	machines, nextToken, err := s.store.ListMachines(ctx, rn)
+	if err != nil {
+		err = fmt.Errorf("error retreiving machines: %w", err)
+	}
 	return &v1.ListMachinesResponse{
 		Machines:      machines,
 		NextPageToken: nextToken,
@@ -25,5 +29,5 @@ func (s *Service) GetMachine(ctx context.Context, req *v1.GetMachineRequest) (*v
 	if err != nil {
 		return nil, err
 	}
-	return s.machinestore.Find(ctx, rn)
+	return s.store.FindMachine(ctx, rn)
 }

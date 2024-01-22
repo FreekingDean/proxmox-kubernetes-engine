@@ -5,17 +5,17 @@ import (
 	"fmt"
 
 	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
-	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/storage"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
 	sqlbuilder "github.com/huandu/go-sqlbuilder"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Service struct {
 	v1.UnimplementedClusterServiceServer
-	store *storage.Storage
+	store *store.Store
 }
 
-func NewService(s *storage.Storage) *Service {
+func NewService(s *store.Store) *Service {
 	return &Service{
 		store: s,
 	}

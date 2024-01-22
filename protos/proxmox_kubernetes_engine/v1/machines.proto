@@ -17,13 +17,13 @@ option go_package = "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/pr
 service MachineService {
   rpc GetMachine(GetMachineRequest) returns (Machine) {
     option (google.api.http) = {
-      get: "/v1/{name=nodePools/*/machines/*}"
+      get: "/v1/{name=machinePools/*/machines/*}"
     };
     option (google.api.method_signature) = "name";
   }
   rpc ListMachines(ListMachinesRequest) returns (ListMachinesResponse) {
     option (google.api.http) = {
-      get: "/v1/{parent=nodePools/*}/machines"
+      get: "/v1/{parent=machinePools/*}/machines"
     };
     option (google.api.method_signature) = "parent";
   }
@@ -41,7 +41,7 @@ message ListMachinesRequest {
   string parent = 1 [
   (google.api.field_behavior) = REQUIRED,
   (google.api.resource_reference) = {
-    type: "proxmox-kubernetes-engine.io/NodePool"
+    type: "proxmox-kubernetes-engine.io/MachinePool"
   }];
   int32 page_size = 2 [ (google.api.field_behavior) = OPTIONAL ];
   string page_token = 3 [ (google.api.field_behavior) = OPTIONAL ];
@@ -55,7 +55,7 @@ message ListMachinesResponse {
 message Machine {
   option (google.api.resource) = {
     type: "proxomx-kubernetes-engine.io/Machine"
-    pattern: "nodePools/{node_pool}/machines/{machine}"
+    pattern: "machinePools/{machine_pool}/machines/{machine}"
     singular: "machine"
     plural: "machines"
   };
@@ -69,7 +69,7 @@ message Machine {
   int32 cpus = 4 [ (google.api.field_behavior) = OUTPUT_ONLY ];
   State state = 5 [ (google.api.field_behavior) = OUTPUT_ONLY ];
   string group = 6 [ (google.api.field_behavior) = OUTPUT_ONLY ];
-  string currentNode = 7 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+  string current_node = 7 [ (google.api.field_behavior) = OUTPUT_ONLY ];
 }
 
 enum State {

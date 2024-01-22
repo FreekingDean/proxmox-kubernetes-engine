@@ -10,7 +10,8 @@ CREATE TABLE node_pools(
   id TEXT PRIMARY KEY,
   name TEXT,
   memory INTEGER,
-  cpus INTEGER
+  cpus INTEGER,
+  group_name TEXT
 );
 
 CREATE TABLE node_pool_assignments(
@@ -28,6 +29,9 @@ CREATE TABLE machines(
   memory INTEGER,
   cpus INTEGER,
   node_pool_id TEXT,
+  group_name TEXT,
+  node TEXT,
+  state Text,
   FOREIGN KEY(node_pool_id) REFERENCES node_pools(id)
 );
 -- +goose StatementEnd

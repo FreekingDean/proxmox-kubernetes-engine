@@ -13,15 +13,18 @@ PROTOGW_GENERATED=$(patsubst $(PROTODIR)/%.proto,$(GENDIR)/%.pb.gw.go, $(PROTOSO
 PROTOAIP_GENERATED=$(patsubst $(PROTODIR)/%.proto,$(GENDIR)/%_aip.go, $(PROTOSOURCES))
 ALL_PROTO_GENERATED=$(PROTOGO_GENERATED) $(PROTOGRPC_GENERATED) $(PROTOGW_GENERATED) $(PROTOAIP_GENERATED)
 
-$(BIN)/proxmox-kubernetes-engine: $(ALL_PROTO_GENERATED) $(GOSOURCES) cmd/root.go
-	@ go build -o bin/proxmox-kubernetes-engine
+$(BIN)/proxmox-kubernetes-engine: $(ALL_PROTO_GENERATED) $(GOSOURCES) cmd/root.go go.sum
+	go build -o bin/proxmox-kubernetes-engine
+
+go.sum: go.mod $(GOSOURCES)
+	go mod tidy
 
 $(ALL_PROTO_GENERATED): $(PROTOSOURCES)
-	@ rm -rf gen/go
-	@ buf generate $(PROTODIR) --template $(PROTODIR)/buf.gen.yaml
+	rm -rf gen/go
+	buf generate $(PROTODIR) --template $(PROTODIR)/buf.gen.yaml
 
 bin/goose: cmd/goose/main.go
-	@ go build -o bin/goose ./cmd/goose
+	go build -o bin/goose ./cmd/goose
 
 .PHONY: test
 test:
@@ -30,11 +33,15 @@ test:
 .PHONY: clean
 clean:
 	@ echo "RUNNING CLEAN"
-	@ rm -rf gen
-	@ rm -rf bin
+	rm -rf gen
+	rm -rf bin
 
-.PHONY: debug
+.PHONY: tools
 tools: $(BIN)/goose
+
+.PHONY: lint
+lint:
+	@ sh api-linter.sh
 
 .PHONY: run
 run: $(BIN)/proxmox-kubernetes-engine

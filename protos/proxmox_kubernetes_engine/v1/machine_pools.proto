@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/field_mask.proto";
+
+package proxmox_kubernetes_engine.v1;
+
+option java_multiple_files = true;
+option java_package = "com.proxmox_kubernetes_engine.v1";
+option java_outer_classname = "MachinePoolsProto";
+option go_package = "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1";
+
+service MachinePoolService {
+    rpc GetMachinePool(GetMachinePoolRequest) returns (MachinePool) {
+    option (google.api.http) = {
+      get: "/v1/{name=machinePools/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+    rpc ListMachinePools(ListMachinePoolsRequest) returns (ListMachinePoolsResponse) {
+    option (google.api.http) = {
+      get: "/v1/machinePools"
+    };
+  }
+    rpc CreateMachinePool(CreateMachinePoolRequest) returns(MachinePool) {
+    option (google.api.http) = {
+      post: "/v1/machinePools"
+      body: "machine_pool"
+    };
+    option (google.api.method_signature) = "machine_pool,machine_pool_id";
+  }
+    rpc UpdateMachinePool(UpdateMachinePoolRequest) returns(MachinePool) {
+    option (google.api.http) = {
+      patch: "/v1/{machine_pool.name=machinePools/*}"
+      body: "machine_pool"
+    };
+    option (google.api.method_signature) = "machine_pool,update_mask";
+  }
+    rpc DeleteMachinePool(DeleteMachinePoolRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=machinePools/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+}
+
+message GetMachinePoolRequest {
+  string name = 1 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/MachinePool"
+  }];
+}
+
+message ListMachinePoolsRequest {
+  int32 page_size = 1 [ (google.api.field_behavior) = OPTIONAL ];
+  string page_token = 2 [ (google.api.field_behavior) = OPTIONAL ];
+}
+
+message ListMachinePoolsResponse {
+  repeated MachinePool machine_pools = 1;
+  string next_page_token = 2;
+}
+
+message CreateMachinePoolRequest {
+  string machine_pool_id = 1 [ (google.api.field_behavior) = REQUIRED ];
+  MachinePool machine_pool = 2 [ (google.api.field_behavior) = REQUIRED ];
+}
+
+message UpdateMachinePoolRequest {
+  MachinePool machine_pool = 1 [ (google.api.field_behavior) = REQUIRED ];
+  google.protobuf.FieldMask update_mask = 2 [ (google.api.field_behavior) = REQUIRED ];
+}
+
+message DeleteMachinePoolRequest {
+  string name = 1 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/MachinePool"
+  }];
+}
+
+message MachinePool {
+  option (google.api.resource) = {
+    type: "proxomx-kubernetes-engine.io/MachinePool"
+    pattern: "machinePools/{machine_pool}"
+    singular: "machinePool"
+    plural: "machinePools"
+  };
+  string name = 1 [
+  (google.api.field_behavior) = IDENTIFIER,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/MachinePool"
+  }];
+  string image = 2 [ (google.api.field_behavior) = REQUIRED ];
+  int32 memory = 3 [ (google.api.field_behavior) = REQUIRED ];
+  int32 cpus = 4 [ (google.api.field_behavior) = REQUIRED ];
+  string group = 6 [ (google.api.field_behavior) = REQUIRED ];
+
+  repeated string machines = 5 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+}
+

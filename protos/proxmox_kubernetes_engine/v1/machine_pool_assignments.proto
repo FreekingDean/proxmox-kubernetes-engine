@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/field_mask.proto";
+
+package proxmox_kubernetes_engine.v1;
+
+option java_multiple_files = true;
+option java_package = "com.proxmox_kubernetes_engine.v1";
+option java_outer_classname = "MachinePoolAssignmentsProto";
+option go_package = "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1";
+
+service MachinePoolAssignmentService {
+    rpc GetMachinePoolAssignment(GetMachinePoolAssignmentRequest) returns (MachinePoolAssignment) {
+    option (google.api.http) = {
+      get: "/v1/{name=clusters/*/machinePoolAssignments/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+    rpc ListMachinePoolAssignments(ListMachinePoolAssignmentsRequest) returns (ListMachinePoolAssignmentsResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=clusters/*}/machinePoolAssignments"
+    };
+    option (google.api.method_signature) = "parent";
+  }
+    rpc CreateMachinePoolAssignment(CreateMachinePoolAssignmentRequest) returns(MachinePoolAssignment) {
+    option (google.api.http) = {
+      post: "/v1/{parent=clusters/*}/machinePoolAssignments"
+      body: "machine_pool_assignment"
+    };
+    option (google.api.method_signature) = "parent,machine_pool_assignment,machine_pool_assignment_id";
+  }
+    rpc UpdateMachinePoolAssignment(UpdateMachinePoolAssignmentRequest) returns(MachinePoolAssignment) {
+    option (google.api.http) = {
+      patch: "/v1/{machine_pool_assignment.name=clusters/*/machinePoolAssignments/*}"
+      body: "machine_pool_assignment"
+    };
+    option (google.api.method_signature) = "machine_pool_assignment,update_mask";
+  }
+    rpc DeleteMachinePoolAssignment(DeleteMachinePoolAssignmentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=clusters/*/machinePoolAssignments/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+}
+
+message GetMachinePoolAssignmentRequest {
+  string name = 1 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/MachinePoolAssignment"
+  }];
+}
+
+message ListMachinePoolAssignmentsRequest {
+  string parent = 1 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/Cluster"
+  }];
+  int32 page_size = 2 [ (google.api.field_behavior) = OPTIONAL ];
+  string page_token = 3 [ (google.api.field_behavior) = OPTIONAL ];
+}
+
+message ListMachinePoolAssignmentsResponse {
+  repeated MachinePoolAssignment machine_pool_assignments = 1;
+  string next_page_token = 2;
+}
+
+message CreateMachinePoolAssignmentRequest {
+  string machine_pool_assignment_id = 1 [ (google.api.field_behavior) = REQUIRED ];
+  string parent = 2 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/Cluster"
+  }];
+  MachinePoolAssignment machine_pool_assignment = 3 [ (google.api.field_behavior) = REQUIRED ];
+}
+
+message UpdateMachinePoolAssignmentRequest {
+  MachinePoolAssignment machine_pool_assignment = 1 [ (google.api.field_behavior) = REQUIRED ];
+  google.protobuf.FieldMask update_mask = 2 [ (google.api.field_behavior) = REQUIRED ];
+}
+
+message DeleteMachinePoolAssignmentRequest {
+  string name = 1 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/MachinePoolAssignment"
+  }];
+}
+
+message MachinePoolAssignment {
+  option (google.api.resource) = {
+    type: "proxomx-kubernetes-engine.io/MachinePoolAssignment"
+    pattern: "clusters/{cluster}/machinePoolAssignments/{machine_pool_assignment}"
+    singular: "machinePoolAssignment"
+    plural: "machinePoolAssignments"
+  };
+  string name = 1 [
+  (google.api.field_behavior) = IDENTIFIER,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/MachinePoolAssignment"
+  }];
+  string machine_pool = 2 [ (google.api.field_behavior) = REQUIRED ];
+  Role role = 3 [ (google.api.field_behavior) = REQUIRED ];
+  int32 count = 4 [ (google.api.field_behavior) = REQUIRED ];
+}
+
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  CONTROL = 1;
+  ETCD = 2;
+  WORKER = 3;
+  ETCD_CONTROL = 4;
+  ETCD_CONTROL_WORKER = 5;
+}

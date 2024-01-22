@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/config"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/grpc/interceptors"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/logger"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
@@ -64,10 +65,12 @@ func New(lc fx.Lifecycle, p ServerParams) (*grpc.Server, net.Listener, error) {
 		grpc.ChainUnaryInterceptor(
 			logging.UnaryServerInterceptor(p.Logger.InterceptorLogger(), opts...),
 			validator.UnaryServerInterceptor(),
+			interceptors.ValidateFieldBehaviorUnaryInterceptor(),
 		),
 		grpc.ChainStreamInterceptor(
 			logging.StreamServerInterceptor(p.Logger.InterceptorLogger(), opts...),
 			validator.StreamServerInterceptor(),
+			interceptors.ValidateFieldBehaviorStreamInterceptor(),
 		),
 	)
 	return s, lis, nil

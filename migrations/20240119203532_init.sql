@@ -30,7 +30,7 @@ CREATE TABLE machines(
   cpus INTEGER,
   machine_pool_id TEXT,
   group_name TEXT,
-  machine TEXT,
+  node TEXT,
   state Text,
   FOREIGN KEY(machine_pool_id) REFERENCES machine_pools(id)
 );

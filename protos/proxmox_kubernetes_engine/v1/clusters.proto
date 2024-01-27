@@ -15,6 +15,7 @@ option java_outer_classname = "ClustersProto";
 option go_package = "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1";
 
 service ClusterService {
+    option (google.api.default_host) = "localhost:8080";
     rpc GetCluster(GetClusterRequest) returns (Cluster) {
     option (google.api.http) = {
       get: "/v1/{name=clusters/*}"

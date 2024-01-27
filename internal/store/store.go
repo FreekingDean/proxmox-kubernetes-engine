@@ -29,7 +29,11 @@ type StoreParams struct {
 }
 
 func New(ctx context.Context, p StoreParams) (*Store, error) {
-	db, err := sqlx.ConnectContext(ctx, "sqlite3", "./db/local.sqlite")
+	db, err := sqlx.ConnectContext(ctx, "sqlite3", "file:./db/local.sqlite?_foreign_keys=on")
+	if err != nil {
+		return nil, err
+	}
+	_, err = db.Exec("PRAGMA foriegn_keys = ON")
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +71,9 @@ func (s *Store) Transaction(ctx context.Context, f txfunc) error {
 	if err != nil {
 		return err
 	}
-	defer tx.Commit()
+	defer func() {
+		_ = tx.Commit()
+	}()
 
 	txs := &Store{
 		db:     tx,

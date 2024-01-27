@@ -7,6 +7,8 @@ import (
 	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
 	sqlbuilder "github.com/huandu/go-sqlbuilder"
+	"go.uber.org/fx"
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -15,7 +17,16 @@ type Service struct {
 	store *store.Store
 }
 
-func NewService(s *store.Store) *Service {
+func Register(lc fx.Lifecycle, s *Service, g *grpc.Server) {
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			v1.RegisterClusterServiceServer(g, s)
+			return nil
+		},
+	})
+}
+
+func New(s *store.Store) *Service {
 	return &Service{
 		store: s,
 	}

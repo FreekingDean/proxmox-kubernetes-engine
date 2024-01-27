@@ -9,26 +9,37 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (s *Service) CreateMachine(ctx context.Context, machinePool *v1.MachinePool) error {
+func (s *Service) CreateMachine(ctx context.Context, machinePoolAssignment *v1.MachinePoolAssignment) error {
+	rn := &v1.MachinePoolResourceName{}
+	err := rn.UnmarshalString(machinePoolAssignment.MachinePool)
+	if err != nil {
+		return err
+	}
+	machinePool, err := s.store.FindMachinePool(ctx, rn)
+	if err != nil {
+		return err
+	}
 	node, err := s.proxmox.FindAvailableNode(ctx, machinePool.Group, int(machinePool.Memory), int(machinePool.Cpus))
 	if err != nil {
 		return errors.Wrap(err, "couldnt find a machine")
 	}
 
-	nprn := &v1.MachinePoolResourceName{}
-	err = nprn.UnmarshalString(machinePool.Name)
+	nprn := &v1.MachinePoolAssignmentResourceName{}
+	err = nprn.UnmarshalString(machinePoolAssignment.Name)
 	if err != nil {
 		return errors.Wrap(err, "couldnt parse machinepool name")
 	}
-	rn := &v1.MachineResourceName{
-		MachinePool: nprn.MachinePool,
-		Machine:     util.UniqueName(6),
+	resourceName := &v1.MachineResourceName{
+		Cluster:               nprn.Cluster,
+		MachinePoolAssignment: nprn.MachinePoolAssignment,
+		Machine:               util.UniqueName(6),
 	}
 	machine := &v1.Machine{
-		Name:        rn.String(),
+		Name:        resourceName.String(),
 		CurrentNode: string(node),
 		Memory:      machinePool.Memory,
 		Cpus:        machinePool.Cpus,
+		Version:     machinePool.Version,
 	}
 
 	err = s.store.CreateMachine(ctx, machine)

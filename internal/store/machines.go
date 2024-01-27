@@ -20,6 +20,8 @@ func (s *Store) CreateMachine(ctx context.Context, machine *v1.Machine) error {
 	ms := sqlbuilder.NewStruct(new(models.Machine))
 	m.State = string(v1.State_CREATING)
 	query, args := ms.InsertInto("machines", m).Build()
+	s.logger.Debug(query)
+	s.logger.Debug(fmt.Sprintf("%v", args))
 	return s.Execute(ctx, query, args...)
 }
 

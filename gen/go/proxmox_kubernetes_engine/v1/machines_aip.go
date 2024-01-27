@@ -14,25 +14,44 @@ import (
 )
 
 type MachineResourceName struct {
-	MachinePool string
-	Machine     string
+	Cluster               string
+	MachinePoolAssignment string
+	Machine               string
 }
 
-func (n MachinePoolResourceName) MachineResourceName(
+func (n ClusterResourceName) MachineResourceName(
+	machinePoolAssignment string,
 	machine string,
 ) MachineResourceName {
 	return MachineResourceName{
-		MachinePool: n.MachinePool,
-		Machine:     machine,
+		Cluster:               n.Cluster,
+		MachinePoolAssignment: machinePoolAssignment,
+		Machine:               machine,
+	}
+}
+
+func (n MachinePoolAssignmentResourceName) MachineResourceName(
+	machine string,
+) MachineResourceName {
+	return MachineResourceName{
+		Cluster:               n.Cluster,
+		MachinePoolAssignment: n.MachinePoolAssignment,
+		Machine:               machine,
 	}
 }
 
 func (n MachineResourceName) Validate() error {
-	if n.MachinePool == "" {
-		return fmt.Errorf("machine_pool: empty")
+	if n.Cluster == "" {
+		return fmt.Errorf("cluster: empty")
 	}
-	if strings.IndexByte(n.MachinePool, '/') != -1 {
-		return fmt.Errorf("machine_pool: contains illegal character '/'")
+	if strings.IndexByte(n.Cluster, '/') != -1 {
+		return fmt.Errorf("cluster: contains illegal character '/'")
+	}
+	if n.MachinePoolAssignment == "" {
+		return fmt.Errorf("machine_pool_assignment: empty")
+	}
+	if strings.IndexByte(n.MachinePoolAssignment, '/') != -1 {
+		return fmt.Errorf("machine_pool_assignment: contains illegal character '/'")
 	}
 	if n.Machine == "" {
 		return fmt.Errorf("machine: empty")
@@ -44,13 +63,14 @@ func (n MachineResourceName) Validate() error {
 }
 
 func (n MachineResourceName) ContainsWildcard() bool {
-	return false || n.MachinePool == "-" || n.Machine == "-"
+	return false || n.Cluster == "-" || n.MachinePoolAssignment == "-" || n.Machine == "-"
 }
 
 func (n MachineResourceName) String() string {
 	return resourcename.Sprint(
-		"machinePools/{machine_pool}/machines/{machine}",
-		n.MachinePool,
+		"clusters/{cluster}/machinePoolAssignments/{machine_pool_assignment}/machines/{machine}",
+		n.Cluster,
+		n.MachinePoolAssignment,
 		n.Machine,
 	)
 }
@@ -65,14 +85,22 @@ func (n MachineResourceName) MarshalString() (string, error) {
 func (n *MachineResourceName) UnmarshalString(name string) error {
 	return resourcename.Sscan(
 		name,
-		"machinePools/{machine_pool}/machines/{machine}",
-		&n.MachinePool,
+		"clusters/{cluster}/machinePoolAssignments/{machine_pool_assignment}/machines/{machine}",
+		&n.Cluster,
+		&n.MachinePoolAssignment,
 		&n.Machine,
 	)
 }
 
-func (n MachineResourceName) MachinePoolResourceName() MachinePoolResourceName {
-	return MachinePoolResourceName{
-		MachinePool: n.MachinePool,
+func (n MachineResourceName) ClusterResourceName() ClusterResourceName {
+	return ClusterResourceName{
+		Cluster: n.Cluster,
+	}
+}
+
+func (n MachineResourceName) MachinePoolAssignmentResourceName() MachinePoolAssignmentResourceName {
+	return MachinePoolAssignmentResourceName{
+		Cluster:               n.Cluster,
+		MachinePoolAssignment: n.MachinePoolAssignment,
 	}
 }

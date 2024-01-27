@@ -24,10 +24,14 @@ func main() {
 	}
 
 	command := args[0]
-	dbstring := "db/local.sqlite"
+	dbstring := "file:db/local.sqlite?_foreign_keys=on"
 	db, err := goose.OpenDBWithDriver("sqlite3", dbstring)
 	if err != nil {
 		log.Fatalf("goose: failed to open DB: %v\n", err)
+	}
+	_, err = db.Exec("PRAGMA foriegn_keys = ON")
+	if err != nil {
+		log.Fatalf("goose: failed to set foreign_key constraint %v\n", err)
 	}
 	defer func() {
 		if err := db.Close(); err != nil {

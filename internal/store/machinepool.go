@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 
 	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store/models"
@@ -23,6 +24,16 @@ func (s *Store) CreateMachinePool(ctx context.Context, machinePoolID string, mac
 	return s.Execute(ctx, query, args...)
 }
 
-func (s *Store) FindMachinePool(name string) (*v1.MachinePool, error) {
-	return nil, nil
+func (s *Store) FindMachinePool(ctx context.Context, rn *v1.MachinePoolResourceName) (*v1.MachinePool, error) {
+	ms := sqlbuilder.NewStruct(new(models.MachinePool))
+	sb := ms.SelectFrom("machine_pools")
+	sb.Where(sb.Equal("id", rn.MachinePool))
+	query, args := sb.Build()
+
+	resp := models.MachinePool{}
+	err := s.Find(ctx, query, &resp, args...)
+	if err != nil {
+		return nil, fmt.Errorf("error calling find: %w", err)
+	}
+	return resp.ToAPI()
 }

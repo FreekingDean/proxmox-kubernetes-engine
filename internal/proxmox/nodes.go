@@ -23,6 +23,7 @@ const (
 )
 
 func (c *Client) FindAvailableNode(ctx context.Context, group string, cpus, memory int) (NodeID, error) {
+	return "fake-node", nil // While proxmox server down
 	respGroup, err := c.groups.Find(ctx, groups.FindRequest{Group: group})
 	if err != nil {
 		return "", err

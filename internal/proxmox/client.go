@@ -31,6 +31,7 @@ type ProxmoxParams struct {
 }
 
 func New(p ProxmoxParams) (*Client, error) {
+	return &Client{}, nil // While proxmox down
 	ctx := context.Background()
 	client := proxmox.NewClient(p.Config.ProxmoxHost)
 

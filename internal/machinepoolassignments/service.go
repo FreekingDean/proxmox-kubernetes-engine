@@ -4,33 +4,42 @@ import (
 	"context"
 
 	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
-	"google.golang.org/protobuf/types/known/emptypb"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/logger"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/proxmox"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
+	"go.uber.org/fx"
+	"google.golang.org/grpc"
 )
 
 type Service struct {
 	v1.UnimplementedMachinePoolAssignmentServiceServer
+
+	proxmox *proxmox.Client
+	store   *store.Store
 }
 
-func NewService() *Service {
-	return &Service{}
+type ServiceParams struct {
+	fx.In
+
+	Logger  logger.Logger
+	Proxmox *proxmox.Client
+	Store   *store.Store
 }
 
-func (s *Service) CreateMachinePoolAssignment(ctx context.Context, req *v1.CreateMachinePoolAssignmentRequest) (*v1.MachinePoolAssignment, error) {
-	return nil, nil
+func Register(lc fx.Lifecycle, s *Service, g *grpc.Server) {
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			v1.RegisterMachinePoolAssignmentServiceServer(g, s)
+			return nil
+		},
+	})
 }
 
-func (s *Service) DeleteMachinePoolAssignment(ctx context.Context, req *v1.DeleteMachinePoolAssignmentRequest) (*emptypb.Empty, error) {
-	return nil, nil
-}
+func New(p ServiceParams) *Service {
+	s := &Service{
+		proxmox: p.Proxmox,
+		store:   p.Store,
+	}
 
-func (s *Service) ListMachinePoolAssignments(ctx context.Context, req *v1.ListMachinePoolAssignmentsRequest) (*v1.ListMachinePoolAssignmentsResponse, error) {
-	return nil, nil
-}
-
-func (s *Service) GetMachinePoolAssignment(ctx context.Context, req *v1.GetMachinePoolAssignmentRequest) (*v1.MachinePoolAssignment, error) {
-	return nil, nil
-}
-
-func (s *Service) UpdateMachinePoolAssignment(ctx context.Context, req *v1.UpdateMachinePoolAssignmentRequest) (*v1.MachinePoolAssignment, error) {
-	return nil, nil
+	return s
 }

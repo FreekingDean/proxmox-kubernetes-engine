@@ -5,11 +5,13 @@ import (
 )
 
 func RootCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:   "server",
-		Short: "Start server",
-		Run: func(cmd *cobra.Command, args []string) {
-			RunServer()
-		},
+	rootCmd := &cobra.Command{
+		Use:   "",
+		Short: "",
 	}
+	rootCmd.AddCommand(
+		bgsCmd(),
+		serverCmd(),
+	)
+	return rootCmd
 }

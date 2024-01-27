@@ -1,0 +1,20 @@
+version: v1
+
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/FreekingDean/proxmox-kubernetes-engine/cmd/pke
+    except:
+      - buf.build/googleapis/googleapis
+plugins:
+  - plugin: buf.build/protocolbuffers/go
+    out: cmd/pke
+    opt:
+      - module=github.com/FreekingDean/proxmox-kubernetes-engine/cmd/pke
+  - name: go-aip-cli
+    out: cmd/pke
+    strategy: all
+    opt:
+      - module=github.com/FreekingDean/proxmox-kubernetes-engine/cmd/pke
+      - root=main
+      - gcloud_identity_tokens=false

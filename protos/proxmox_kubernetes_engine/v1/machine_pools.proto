@@ -99,9 +99,5 @@ message MachinePool {
   string image = 2 [ (google.api.field_behavior) = REQUIRED ];
   int32 memory = 3 [ (google.api.field_behavior) = REQUIRED ];
   int32 cpus = 4 [ (google.api.field_behavior) = REQUIRED ];
-  string group = 6 [ (google.api.field_behavior) = REQUIRED ];
-  int32 version = 7 [ (google.api.field_behavior) = OUTPUT_ONLY ];
-
-  repeated string machines = 5 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+  string group = 5 [ (google.api.field_behavior) = REQUIRED ];
 }
-

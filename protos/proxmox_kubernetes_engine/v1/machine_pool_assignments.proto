@@ -107,7 +107,11 @@ message MachinePoolAssignment {
   (google.api.resource_reference) = {
     type: "proxmox-kubernetes-engine.io/MachinePoolAssignment"
   }];
-  string machine_pool = 2 [ (google.api.field_behavior) = REQUIRED ];
+  string machine_pool = 2 [
+  (google.api.field_behavior) = REQUIRED,
+  (google.api.resource_reference) = {
+    type: "proxmox-kubernetes-engine.io/MachinePool"
+  }];
   Role role = 3 [ (google.api.field_behavior) = REQUIRED ];
   int32 count = 4 [ (google.api.field_behavior) = REQUIRED ];
 }

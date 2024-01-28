@@ -35,11 +35,13 @@ func (s *Service) CreateMachine(ctx context.Context, machinePoolAssignment *v1.M
 		Machine:               util.UniqueName(6),
 	}
 	machine := &v1.Machine{
-		Name:        resourceName.String(),
-		CurrentNode: string(node),
-		Memory:      machinePool.Memory,
-		Cpus:        machinePool.Cpus,
-		Version:     machinePool.Version,
+		Name:   resourceName.String(),
+		Node:   string(node),
+		Memory: machinePool.Memory,
+		Cpus:   machinePool.Cpus,
+		Image:  machinePool.Image,
+		Group:  machinePool.Group,
+		Role:   machinePoolAssignment.Role.String(),
 	}
 
 	err = s.store.CreateMachine(ctx, machine)

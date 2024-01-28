@@ -25,6 +25,5 @@ func (s *Service) checkMachinePoolAssignments() {
 			s.logger.Error(fmt.Sprintf("error creating machine %s", err.Error()))
 			continue
 		}
-		// d
 	}
 }

@@ -17,7 +17,7 @@ option go_package = "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/pr
 service MachineService {
   rpc GetMachine(GetMachineRequest) returns (Machine) {
     option (google.api.http) = {
-      get: "/v1/{name=clusters/*machinePoolAssignments/*/machines/*}"
+      get: "/v1/{name=clusters/*/machinePoolAssignments/*/machines/*}"
     };
     option (google.api.method_signature) = "name";
   }
@@ -69,19 +69,19 @@ message Machine {
   int32 cpus = 4 [ (google.api.field_behavior) = OUTPUT_ONLY ];
   State state = 5 [ (google.api.field_behavior) = OUTPUT_ONLY ];
   string group = 6 [ (google.api.field_behavior) = OUTPUT_ONLY ];
-  string current_node = 7 [ (google.api.field_behavior) = OUTPUT_ONLY ];
-  int32 version = 8 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+  string role = 7 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+  string node = 8 [ (google.api.field_behavior) = OUTPUT_ONLY ];
 }
 
 enum State {
   UNKNOWN = 0;
   STARTING = 1;
-  RUNNING = 2;
+  RUNNING = 2; // Terminal
   STOPPING = 3;
-  STOPPED = 4;
-  ERROR = 5;
+  STOPPED = 4; // Terminal
+  ERROR = 5; // Terminal
   CREATING = 6;
   CREATED = 7;
   DESTROYING = 8;
-  DESTROYED = 9;
+  DESTROYED = 9; // Terminal
 }

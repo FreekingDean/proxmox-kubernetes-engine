@@ -8,7 +8,7 @@ import (
 )
 
 func (s *Service) ListMachines(ctx context.Context, req *v1.ListMachinesRequest) (*v1.ListMachinesResponse, error) {
-	rn := v1.MachinePoolResourceName{}
+	rn := v1.MachinePoolAssignmentResourceName{}
 	err := rn.UnmarshalString(req.Parent)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing resource name: %w", err)

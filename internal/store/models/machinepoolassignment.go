@@ -18,10 +18,16 @@ func (machinePoolAssignment *MachinePoolAssignment) FromAPI(mpa *v1.MachinePoolA
 		return err
 	}
 
+	mprn := v1.MachinePoolResourceName{}
+	err = mprn.UnmarshalString(mpa.MachinePool)
+	if err != nil {
+		return err
+	}
+
 	machinePoolAssignment.ID = rn.MachinePoolAssignment
 	machinePoolAssignment.Name = mpa.Name
 	machinePoolAssignment.ClusterID = rn.Cluster
-	machinePoolAssignment.MachinePoolID = mpa.MachinePool
+	machinePoolAssignment.MachinePoolID = mprn.MachinePool
 	machinePoolAssignment.Role = mpa.Role.String()
 	machinePoolAssignment.Count = int(mpa.Count)
 
@@ -29,14 +35,24 @@ func (machinePoolAssignment *MachinePoolAssignment) FromAPI(mpa *v1.MachinePoolA
 }
 
 func (machinePoolAssignment *MachinePoolAssignment) ToAPI() (*v1.MachinePoolAssignment, error) {
-	rn := v1.MachinePoolAssignmentResourceName{
+	rn := &v1.MachinePoolAssignmentResourceName{
 		MachinePoolAssignment: machinePoolAssignment.ID,
 		Cluster:               machinePoolAssignment.ClusterID,
 	}
 	name, err := rn.MarshalString()
+	if err != nil {
+		return nil, err
+	}
+	mprn := &v1.MachinePoolResourceName{
+		MachinePool: machinePoolAssignment.MachinePoolID,
+	}
+	mpName, err := mprn.MarshalString()
+	if err != nil {
+		return nil, err
+	}
 	return &v1.MachinePoolAssignment{
 		Name:        name,
-		MachinePool: machinePoolAssignment.MachinePoolID,
+		MachinePool: mpName,
 		Role:        v1.Role(v1.Role_value[machinePoolAssignment.Role]),
 		Count:       int32(machinePoolAssignment.Count),
 	}, err

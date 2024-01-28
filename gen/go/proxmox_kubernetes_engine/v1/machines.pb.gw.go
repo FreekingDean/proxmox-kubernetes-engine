@@ -167,7 +167,7 @@ func RegisterMachineServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proxmox_kubernetes_engine.v1.MachineService/GetMachine", runtime.WithHTTPPathPattern("/v1/{name=clusters/*machinePoolAssignments/*/machines/*}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proxmox_kubernetes_engine.v1.MachineService/GetMachine", runtime.WithHTTPPathPattern("/v1/{name=clusters/*/machinePoolAssignments/*/machines/*}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -256,7 +256,7 @@ func RegisterMachineServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proxmox_kubernetes_engine.v1.MachineService/GetMachine", runtime.WithHTTPPathPattern("/v1/{name=clusters/*machinePoolAssignments/*/machines/*}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proxmox_kubernetes_engine.v1.MachineService/GetMachine", runtime.WithHTTPPathPattern("/v1/{name=clusters/*/machinePoolAssignments/*/machines/*}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -298,7 +298,7 @@ func RegisterMachineServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 }
 
 var (
-	pattern_MachineService_GetMachine_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 2, 3, 1, 0, 4, 5, 5, 4}, []string{"v1", "clusters", "*machinePoolAssignments", "machines", "name"}, ""))
+	pattern_MachineService_GetMachine_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 2, 3, 1, 0, 4, 6, 5, 4}, []string{"v1", "clusters", "machinePoolAssignments", "machines", "name"}, ""))
 
 	pattern_MachineService_ListMachines_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3, 2, 4}, []string{"v1", "clusters", "machinePoolAssignments", "parent", "machines"}, ""))
 )

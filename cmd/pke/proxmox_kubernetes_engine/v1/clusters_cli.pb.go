@@ -46,8 +46,8 @@ func NewClusterServiceCommand(config aipcli.Config) *cobra.Command {
 			&CreateClusterRequest{},
 			&Cluster{},
 			map[protoreflect.FullName]string{
+				"proxmox_kubernetes_engine.v1.Cluster.kubernetes_version":      " IE. k3s-v1.28.5+k3s1\n",
 				"proxmox_kubernetes_engine.v1.Cluster.name":                    "",
-				"proxmox_kubernetes_engine.v1.Cluster.version":                 "",
 				"proxmox_kubernetes_engine.v1.ClusterService.CreateCluster":    "",
 				"proxmox_kubernetes_engine.v1.CreateClusterRequest.cluster":    "",
 				"proxmox_kubernetes_engine.v1.CreateClusterRequest.cluster_id": "",
@@ -61,8 +61,8 @@ func NewClusterServiceCommand(config aipcli.Config) *cobra.Command {
 			&Cluster{},
 			map[protoreflect.FullName]string{
 				"google.protobuf.FieldMask.paths":                               " The set of field mask paths.\n",
+				"proxmox_kubernetes_engine.v1.Cluster.kubernetes_version":       " IE. k3s-v1.28.5+k3s1\n",
 				"proxmox_kubernetes_engine.v1.Cluster.name":                     "",
-				"proxmox_kubernetes_engine.v1.Cluster.version":                  "",
 				"proxmox_kubernetes_engine.v1.ClusterService.UpdateCluster":     "",
 				"proxmox_kubernetes_engine.v1.UpdateClusterRequest.cluster":     "",
 				"proxmox_kubernetes_engine.v1.UpdateClusterRequest.update_mask": "",

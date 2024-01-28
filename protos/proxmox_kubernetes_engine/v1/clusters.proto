@@ -97,6 +97,6 @@ message Cluster {
   (google.api.resource_reference) = {
     type: "proxmox-kubernetes-engine.io/Cluster"
   }];
-  string version = 2 [ (google.api.field_behavior) = REQUIRED ];
+  // IE. k3s-v1.28.5+k3s1
+  string kubernetes_version = 2 [ (google.api.field_behavior) = REQUIRED ];
 }
-

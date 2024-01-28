@@ -25,10 +25,10 @@ func (s *Store) CreateMachine(ctx context.Context, machine *v1.Machine) error {
 	return s.Execute(ctx, query, args...)
 }
 
-func (s *Store) ListMachines(ctx context.Context, parent v1.MachinePoolResourceName) ([]*v1.Machine, string, error) {
+func (s *Store) ListMachines(ctx context.Context, parent v1.MachinePoolAssignmentResourceName) ([]*v1.Machine, string, error) {
 	ms := sqlbuilder.NewStruct(new(models.Machine))
 	sb := ms.SelectFrom("machines")
-	sb.Where(sb.Equal("machine_pool_id", parent.MachinePool))
+	sb.Where(sb.Equal("machine_pool_assignment_id", parent.MachinePoolAssignment))
 	query, args := sb.Build()
 	resp := []models.Machine{}
 	s.logger.Debug(query)

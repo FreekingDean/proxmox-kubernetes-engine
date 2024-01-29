@@ -18,20 +18,39 @@ func (s *Store) CreateMachine(ctx context.Context, machine *v1.Machine) error {
 	}
 
 	ms := sqlbuilder.NewStruct(new(models.Machine))
-	m.State = string(v1.State_CREATING)
+	m.State = v1.State_INITIALIZING.String()
 	query, args := ms.InsertInto("machines", m).Build()
 	s.logger.Debug(query)
-	s.logger.Debug(fmt.Sprintf("%v", args))
+	s.logger.Trace(fmt.Sprintf("%v", args))
 	return s.Execute(ctx, query, args...)
 }
 
-func (s *Store) ListMachines(ctx context.Context, parent v1.MachinePoolAssignmentResourceName) ([]*v1.Machine, string, error) {
+func (s *Store) UpdateMachine(ctx context.Context, machine *v1.Machine) error {
+	rn := &v1.MachineResourceName{}
+	err := rn.UnmarshalString(machine.Name)
+	if err != nil {
+		return err
+	}
+	ms := sqlbuilder.NewStruct(new(models.Machine))
+	ub := ms.WithoutTag("pk").Update("machines", machine)
+	ub.Where(ub.Equal("id", rn.Machine))
+	query, args := ub.Build()
+	s.logger.Debug(query)
+	s.logger.Trace(fmt.Sprintf("%v", args))
+	return s.Execute(ctx, query, args...)
+}
+
+func (s *Store) ListMachines(ctx context.Context, opts ...filterOption) ([]*v1.Machine, string, error) {
 	ms := sqlbuilder.NewStruct(new(models.Machine))
 	sb := ms.SelectFrom("machines")
-	sb.Where(sb.Equal("machine_pool_assignment_id", parent.MachinePoolAssignment))
+	for _, o := range opts {
+		o(sb)
+	}
+
 	query, args := sb.Build()
 	resp := []models.Machine{}
 	s.logger.Debug(query)
+	s.logger.Trace(fmt.Sprintf("%v", args))
 	err := s.Select(ctx, query, &resp, args...)
 	if err != nil {
 		return nil, "", fmt.Errorf("error querying machines %w", err)
@@ -50,11 +69,13 @@ func (s *Store) ListMachines(ctx context.Context, parent v1.MachinePoolAssignmen
 	return machines, nextToken, nil
 }
 
-func (s Store) FindMachine(ctx context.Context, rn v1.MachineResourceName) (*v1.Machine, error) {
+func (s Store) FindMachine(ctx context.Context, rn *v1.MachineResourceName) (*v1.Machine, error) {
 	ms := sqlbuilder.NewStruct(new(models.Machine))
 	sb := ms.SelectFrom("machines")
 	sb.Where(sb.Equal("id", rn.Machine))
 	query, args := sb.Build()
+	s.logger.Debug(query)
+	s.logger.Trace(fmt.Sprintf("%v", args))
 
 	resp := models.Machine{}
 	err := s.Find(ctx, query, &resp, args...)

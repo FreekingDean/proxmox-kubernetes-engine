@@ -10,9 +10,11 @@ import (
 
 type Logger interface {
 	LogEvent(fxevent.Event)
-	Error(string, ...interface{})
+	Error(string)
+	Errorf(string, ...interface{})
 	Info(string, ...interface{})
 	Debug(string, ...interface{})
+	Trace(string)
 	Logger() *logrus.Logger
 	InterceptorLogger() logging.Logger
 }
@@ -23,18 +25,25 @@ type loggerImpl struct {
 
 func NewLogger() Logger {
 	l := logrus.New()
-	l.Level = logrus.DebugLevel
+	l.Level = logrus.TraceLevel
 	return &loggerImpl{
 		logger: l,
 	}
 }
 
-func (l loggerImpl) Error(msg string, data ...interface{}) {
+func (l loggerImpl) Error(msg string) {
 	l.logger.Error(msg)
+}
+
+func (l loggerImpl) Errorf(msg string, args ...interface{}) {
+	l.logger.Errorf(msg, args...)
 }
 
 func (l loggerImpl) Info(msg string, data ...interface{}) {
 	l.logger.Info(msg)
+}
+func (l loggerImpl) Trace(msg string) {
+	l.logger.Trace(msg)
 }
 
 func (l loggerImpl) Debug(msg string, data ...interface{}) {

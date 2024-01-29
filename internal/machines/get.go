@@ -5,15 +5,17 @@ import (
 	"fmt"
 
 	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
 )
 
 func (s *Service) ListMachines(ctx context.Context, req *v1.ListMachinesRequest) (*v1.ListMachinesResponse, error) {
-	rn := v1.MachinePoolAssignmentResourceName{}
+	rn := &v1.MachinePoolAssignmentResourceName{}
 	err := rn.UnmarshalString(req.Parent)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing resource name: %w", err)
 	}
-	machines, nextToken, err := s.store.ListMachines(ctx, rn)
+	filter := store.MachinePoolAssignmentFilter(rn)
+	machines, nextToken, err := s.store.ListMachines(ctx, filter)
 	if err != nil {
 		err = fmt.Errorf("error retreiving machines: %w", err)
 	}
@@ -24,7 +26,7 @@ func (s *Service) ListMachines(ctx context.Context, req *v1.ListMachinesRequest)
 }
 
 func (s *Service) GetMachine(ctx context.Context, req *v1.GetMachineRequest) (*v1.Machine, error) {
-	rn := v1.MachineResourceName{}
+	rn := &v1.MachineResourceName{}
 	err := rn.UnmarshalString(req.Name)
 	if err != nil {
 		return nil, err

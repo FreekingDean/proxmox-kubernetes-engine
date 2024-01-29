@@ -37,3 +37,27 @@ func (s *Store) FindMachinePool(ctx context.Context, rn *v1.MachinePoolResourceN
 	}
 	return resp.ToAPI()
 }
+
+func (s *Store) ListMachinePools(ctx context.Context) ([]*v1.MachinePool, string, error) {
+	ms := sqlbuilder.NewStruct(new(models.MachinePool))
+	sb := ms.SelectFrom("machine_pools")
+	query, args := sb.Build()
+	s.logger.Debug(query)
+	s.logger.Trace(fmt.Sprintf("%+v", args))
+
+	resp := []*models.MachinePool{}
+	err := s.Select(ctx, query, &resp, args...)
+	if err != nil {
+		return nil, "", fmt.Errorf("error calling find: %w", err)
+	}
+	machinePools := make([]*v1.MachinePool, len(resp))
+	token := ""
+	for i, mp := range resp {
+		machinePools[i], err = mp.ToAPI()
+		if err != nil {
+			return nil, "", err
+		}
+		token = mp.ID
+	}
+	return machinePools, token, nil
+}

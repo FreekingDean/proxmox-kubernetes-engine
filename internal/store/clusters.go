@@ -13,8 +13,9 @@ func (s *Store) ListClusters(ctx context.Context) ([]*v1.Cluster, string, error)
 	cs := sqlbuilder.NewStruct(new(models.Cluster))
 	sb := cs.SelectFrom("clusters")
 	query, args := sb.Build()
-	resp := []models.Cluster{}
 	s.logger.Debug(query)
+	s.logger.Trace(fmt.Sprintf("%+v", args))
+	resp := []models.Cluster{}
 	err := s.Select(ctx, query, &resp, args...)
 	if err != nil {
 		return nil, "", fmt.Errorf("error querying clusters %w", err)

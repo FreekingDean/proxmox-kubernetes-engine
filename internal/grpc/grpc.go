@@ -35,7 +35,7 @@ func Run(lc fx.Lifecycle, s *grpc.Server, lis net.Listener, log logger.Logger) {
 			var err error
 			go func() {
 				if err = s.Serve(lis); err != nil {
-					log.Error("failed to serve: %v", err)
+					log.Errorf("failed to serve: %v", err)
 				}
 			}()
 			return err

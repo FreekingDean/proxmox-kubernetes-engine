@@ -10,6 +10,9 @@ import (
 func (s *Service) UpdateMachinePoolAssignment(ctx context.Context, req *v1.UpdateMachinePoolAssignmentRequest) (*v1.MachinePoolAssignment, error) {
 	rn := &v1.MachinePoolAssignmentResourceName{}
 	err := rn.UnmarshalString(req.MachinePoolAssignment.Name)
+	if err != nil {
+		return nil, err
+	}
 	err = s.store.UpdateMachinePoolAssignment(ctx, rn.MachinePoolAssignment, req.MachinePoolAssignment)
 	if err != nil {
 		return nil, errors.Wrap(err, "couldnt update machine pool assignment in store")

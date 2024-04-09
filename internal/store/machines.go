@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/huandu/go-sqlbuilder"
 
@@ -19,6 +20,8 @@ func (s *Store) CreateMachine(ctx context.Context, machine *v1.Machine) error {
 
 	ms := sqlbuilder.NewStruct(new(models.Machine))
 	m.State = v1.State_INITIALIZING.String()
+	m.CreatedAt = time.Now()
+	m.UpdatedAt = time.Now()
 	query, args := ms.InsertInto("machines", m).Build()
 	s.logger.Debug(query)
 	s.logger.Trace(fmt.Sprintf("%v", args))
@@ -32,7 +35,13 @@ func (s *Store) UpdateMachine(ctx context.Context, machine *v1.Machine) error {
 		return err
 	}
 	ms := sqlbuilder.NewStruct(new(models.Machine))
-	ub := ms.WithoutTag("pk").Update("machines", machine)
+	m := &models.Machine{}
+	err = m.FromAPI(machine)
+	m.UpdatedAt = time.Now()
+	if err != nil {
+		return err
+	}
+	ub := ms.WithoutTag("pk").Update("machines", m)
 	ub.Where(ub.Equal("id", rn.Machine))
 	query, args := ub.Build()
 	s.logger.Debug(query)

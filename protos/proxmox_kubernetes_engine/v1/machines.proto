@@ -6,6 +6,7 @@ import "google/api/client.proto";
 import "google/api/resource.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
 
 package proxmox_kubernetes_engine.v1;
 
@@ -71,6 +72,10 @@ message Machine {
   string group = 6 [ (google.api.field_behavior) = OUTPUT_ONLY ];
   string role = 7 [ (google.api.field_behavior) = OUTPUT_ONLY ];
   string node = 8 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+  int32 vmid = 9 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+
+  google.protobuf.Timestamp created_at = 10 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+  google.protobuf.Timestamp updated_at = 11 [ (google.api.field_behavior) = OUTPUT_ONLY ];
 }
 
 enum State {
@@ -80,6 +85,8 @@ enum State {
   STOPPING = 3;
   STOPPED = 4; // Terminal
   ERROR = 5; // Terminal
+  // The machine reconciler has picked up the machine and is attempting
+  // to submit the machine to proxmox to create
   CREATING = 6;
   CREATED = 7;
   DESTROYING = 8;

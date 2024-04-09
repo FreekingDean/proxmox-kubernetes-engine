@@ -81,7 +81,7 @@ func (s *Service) reconcileMachines(ctx context.Context, mparn *v1.MachinePoolAs
 	for _, machine := range machines {
 		err = s.machines.Reconcile(ctx, machine)
 		if err != nil {
-			s.logger.Errorf("Error reconciling machines'%s': %w", machine.Name, err)
+			s.logger.Errorf("Error reconciling machine '%s': %s", machine.Name, err)
 		}
 	}
 }

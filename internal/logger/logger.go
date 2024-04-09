@@ -15,6 +15,7 @@ type Logger interface {
 	Info(string, ...interface{})
 	Debug(string, ...interface{})
 	Trace(string)
+	Tracef(string, ...interface{})
 	Logger() *logrus.Logger
 	InterceptorLogger() logging.Logger
 }
@@ -44,6 +45,9 @@ func (l loggerImpl) Info(msg string, data ...interface{}) {
 }
 func (l loggerImpl) Trace(msg string) {
 	l.logger.Trace(msg)
+}
+func (l loggerImpl) Tracef(msg string, rest ...interface{}) {
+	l.logger.Tracef(msg, rest...)
 }
 
 func (l loggerImpl) Debug(msg string, data ...interface{}) {

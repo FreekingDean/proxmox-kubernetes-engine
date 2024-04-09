@@ -5,12 +5,15 @@ import (
 
 	"github.com/FreekingDean/proxmox-api-go/proxmox"
 	"github.com/FreekingDean/proxmox-api-go/proxmox/access"
+	"github.com/FreekingDean/proxmox-api-go/proxmox/cluster"
 	"github.com/FreekingDean/proxmox-api-go/proxmox/cluster/ha/groups"
 	"github.com/FreekingDean/proxmox-api-go/proxmox/nodes"
 	"github.com/FreekingDean/proxmox-api-go/proxmox/nodes/qemu"
+	"github.com/FreekingDean/proxmox-api-go/proxmox/nodes/qemu/status"
 	"go.uber.org/fx"
 
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/config"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/logger"
 )
 
 var Module = fx.Module("proxmox",
@@ -18,20 +21,23 @@ var Module = fx.Module("proxmox",
 )
 
 type Client struct {
-	client *proxmox.Client
-	nodes  *nodes.Client
-	groups *groups.Client
-	qemu   *qemu.Client
+	client  *proxmox.Client
+	nodes   *nodes.Client
+	groups  *groups.Client
+	qemu    *qemu.Client
+	status  *status.Client
+	cluster *cluster.Client
+	log     logger.Logger
 }
 
 type ProxmoxParams struct {
 	fx.In
 
+	Logger logger.Logger
 	Config config.Config
 }
 
 func New(p ProxmoxParams) (*Client, error) {
-	return &Client{}, nil // While proxmox down
 	ctx := context.Background()
 	client := proxmox.NewClient(p.Config.ProxmoxHost)
 
@@ -48,9 +54,12 @@ func New(p ProxmoxParams) (*Client, error) {
 	client.SetCookie(*ticket.Ticket)
 	client.SetCsrf(*ticket.Csrfpreventiontoken)
 	return &Client{
-		client: client,
-		qemu:   qemu.New(client),
-		nodes:  nodes.New(client),
-		groups: groups.New(client),
+		client:  client,
+		qemu:    qemu.New(client),
+		nodes:   nodes.New(client),
+		groups:  groups.New(client),
+		status:  status.New(client),
+		cluster: cluster.New(client),
+		log:     p.Logger,
 	}, nil
 }

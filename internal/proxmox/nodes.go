@@ -22,8 +22,7 @@ const (
 	GB
 )
 
-func (c *Client) FindAvailableNode(ctx context.Context, group string, cpus, memory int) (NodeID, error) {
-	return "fake-node", nil // While proxmox server down
+func (c *Client) FindAvailableNode(ctx context.Context, group string, memory, cpus int) (NodeID, error) {
 	respGroup, err := c.groups.Find(ctx, groups.FindRequest{Group: group})
 	if err != nil {
 		return "", err
@@ -71,6 +70,9 @@ func (c *Client) FindAvailableNode(ctx context.Context, group string, cpus, memo
 			usedCPU += int(*vm.Cpus)
 			usedMem += *vm.Maxmem
 		}
+		c.log.Tracef("Checking node with %dCPU & %dMemory", *node.Maxcpu, *node.Maxmem/GB)
+		c.log.Tracef("Using %dCPU & %dMemory", usedCPU, usedMem/GB)
+		c.log.Tracef("Requesting %dCPU & %dMemory", cpus, memory)
 		if *node.Maxmem-usedMem > maxAvailMem &&
 			usedMem+(memory/1024)*GB < *node.Maxmem &&
 			cpus+usedCPU < int(*node.Maxcpu) {

@@ -51,6 +51,7 @@ func NewMachinePoolAssignmentServiceCommand(config aipcli.Config) *cobra.Command
 				"proxmox_kubernetes_engine.v1.CreateMachinePoolAssignmentRequest.machine_pool_assignment_id": "",
 				"proxmox_kubernetes_engine.v1.CreateMachinePoolAssignmentRequest.parent":                     "",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.count":                                   "",
+				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.display_name":                            "",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.machine_pool":                            "",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.name":                                    "",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.role":                                    "",
@@ -66,6 +67,7 @@ func NewMachinePoolAssignmentServiceCommand(config aipcli.Config) *cobra.Command
 			map[protoreflect.FullName]string{
 				"google.protobuf.FieldMask.paths":                                                         " The set of field mask paths.\n",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.count":                                "",
+				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.display_name":                         "",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.machine_pool":                         "",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.name":                                 "",
 				"proxmox_kubernetes_engine.v1.MachinePoolAssignment.role":                                 "",

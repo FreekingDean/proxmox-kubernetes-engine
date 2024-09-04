@@ -2,6 +2,7 @@ package logger
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/sirupsen/logrus"
@@ -13,7 +14,9 @@ type Logger interface {
 	Error(string)
 	Errorf(string, ...interface{})
 	Info(string, ...interface{})
+	Infof(string, ...interface{})
 	Debug(string, ...interface{})
+	Debugf(string, ...interface{})
 	Trace(string)
 	Tracef(string, ...interface{})
 	Logger() *logrus.Logger
@@ -26,7 +29,7 @@ type loggerImpl struct {
 
 func NewLogger() Logger {
 	l := logrus.New()
-	l.Level = logrus.TraceLevel
+	l.Level = logrus.DebugLevel
 	return &loggerImpl{
 		logger: l,
 	}
@@ -43,6 +46,11 @@ func (l loggerImpl) Errorf(msg string, args ...interface{}) {
 func (l loggerImpl) Info(msg string, data ...interface{}) {
 	l.logger.Info(msg)
 }
+
+func (l loggerImpl) Infof(msg string, data ...interface{}) {
+	l.logger.Info(fmt.Sprintf(msg, data...))
+}
+
 func (l loggerImpl) Trace(msg string) {
 	l.logger.Trace(msg)
 }
@@ -52,6 +60,10 @@ func (l loggerImpl) Tracef(msg string, rest ...interface{}) {
 
 func (l loggerImpl) Debug(msg string, data ...interface{}) {
 	l.logger.Debug(msg)
+}
+
+func (l loggerImpl) Debugf(msg string, data ...interface{}) {
+	l.logger.Debugf(msg, data...)
 }
 
 func (l loggerImpl) Logger() *logrus.Logger {

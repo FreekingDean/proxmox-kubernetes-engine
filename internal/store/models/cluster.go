@@ -24,5 +24,6 @@ func (c *Cluster) ToAPI() (*v1.Cluster, error) {
 	return &v1.Cluster{
 		Name:              c.Name,
 		KubernetesVersion: c.KubernetesVersion,
+		DisplayName:       c.ID,
 	}, nil
 }

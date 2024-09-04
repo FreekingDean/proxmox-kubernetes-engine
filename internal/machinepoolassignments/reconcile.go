@@ -23,13 +23,6 @@ func (s *Service) Reconcile(ctx context.Context, machinePoolAssignment *v1.Machi
 	if err != nil {
 		return err
 	}
-	eqFilter := store.EqualFilter(map[string]interface{}{
-		"role":       machinePoolAssignment.Role.String(),
-		"memory":     mp.Memory,
-		"cpus":       mp.Cpus,
-		"image":      mp.Image,
-		"group_name": mp.Group,
-	})
 	mpaFilter := store.MachinePoolAssignmentFilter(rn)
 	stateFilter := store.MachineStateFilter(
 		v1.State_STARTING,
@@ -40,11 +33,47 @@ func (s *Service) Reconcile(ctx context.Context, machinePoolAssignment *v1.Machi
 		v1.State_INITIALIZING,
 	)
 
-	machines, _, err := s.store.ListMachines(ctx, eqFilter, mpaFilter, stateFilter)
+	machines, _, err := s.store.ListMachines(ctx, mpaFilter, stateFilter)
 	if err != nil {
 		return err
 	}
-	toCreate := int(machinePoolAssignment.Count) - len(machines)
+	stoppedFilter := store.MachineStateFilter(
+		v1.State_STOPPED,
+	)
+	stoppedMachines, _, err := s.store.ListMachines(ctx, mpaFilter, stoppedFilter)
+	if err != nil {
+		return err
+	}
+
+	goodCount := 0
+	for _, m := range stoppedMachines {
+		allSet := goodCount >= int(machinePoolAssignment.Count)
+		if !isMachineRelevant(m, mp, machinePoolAssignment) || allSet {
+			s.logger.Debugf("Machine Not Relevant or Not Need More %s %s", allSet, isMachineRelevant(m, mp, machinePoolAssignment))
+			m.State = v1.State_TO_DESTROY
+			err := s.store.UpdateMachine(ctx, m)
+			if err != nil {
+				return err
+			}
+			continue
+		}
+		goodCount += 1
+	}
+	for _, m := range machines {
+		allSet := goodCount >= int(machinePoolAssignment.Count)
+		if !isMachineRelevant(m, mp, machinePoolAssignment) || allSet {
+			s.logger.Debugf("Machine Not Relevant or Not Need More %s %s", allSet, isMachineRelevant(m, mp, machinePoolAssignment))
+			m.State = v1.State_TO_DESTROY
+			err := s.store.UpdateMachine(ctx, m)
+			if err != nil {
+				return err
+			}
+			continue
+		}
+		goodCount += 1
+	}
+
+	toCreate := int(machinePoolAssignment.Count) - goodCount
 	for i := toCreate; i > 0; i-- {
 		rn := &v1.MachineResourceName{
 			Cluster:               rn.Cluster,
@@ -71,4 +100,12 @@ func (s *Service) Reconcile(ctx context.Context, machinePoolAssignment *v1.Machi
 		}
 	}
 	return nil
+}
+
+func isMachineRelevant(m *v1.Machine, mp *v1.MachinePool, mpa *v1.MachinePoolAssignment) bool {
+	return m.Role == mpa.Role.String() &&
+		m.Memory == mp.Memory &&
+		m.Cpus == mp.Cpus &&
+		m.Image == mp.Image &&
+		m.Group == mp.Group
 }

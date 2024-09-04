@@ -2,6 +2,7 @@ package proxmox
 
 import (
 	"context"
+	"sync"
 
 	"github.com/FreekingDean/proxmox-api-go/proxmox"
 	"github.com/FreekingDean/proxmox-api-go/proxmox/access"
@@ -28,6 +29,8 @@ type Client struct {
 	status  *status.Client
 	cluster *cluster.Client
 	log     logger.Logger
+
+	vmcreationmu sync.Mutex
 }
 
 type ProxmoxParams struct {
@@ -62,4 +65,12 @@ func New(p ProxmoxParams) (*Client, error) {
 		cluster: cluster.New(client),
 		log:     p.Logger,
 	}, nil
+}
+
+func (c *Client) LockVMCreation() {
+	c.vmcreationmu.Lock()
+}
+
+func (c *Client) UnlockVMCreation() {
+	c.vmcreationmu.Unlock()
 }

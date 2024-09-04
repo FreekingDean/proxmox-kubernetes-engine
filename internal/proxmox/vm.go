@@ -2,12 +2,17 @@ package proxmox
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	ignition "github.com/coreos/ignition/v2/config/v3_4/types"
 
+	"github.com/FreekingDean/proxmox-api-go/proxmox"
 	"github.com/FreekingDean/proxmox-api-go/proxmox/cluster"
+	"github.com/FreekingDean/proxmox-api-go/proxmox/nodes/qemu"
 	"github.com/FreekingDean/proxmox-api-go/proxmox/nodes/qemu/status"
+	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
 )
 
 type State string
@@ -53,8 +58,8 @@ func (c *Client) GetVMState(ctx context.Context, node string, vmid int) (State, 
 	return StateRunning, nil
 }
 
-func (c *Client) CreateVM(ctx context.Context) error {
-	rpminstallUnit := `
+func (c *Client) CreateVM(ctx context.Context, machine *v1.Machine) error {
+	rpmInstallUnit := `
 [Unit]
 Description=Layer qemu-guest-agent with rpm-ostree
 Wants=network-online.target
@@ -97,4 +102,77 @@ WantedBy=multi-user.target
 		},
 	}
 
+	cfgStr, err := json.Marshal(cfg)
+	if err != nil {
+		return err
+	}
+
+	fwstr := fmt.Sprintf(
+		"name=opt/com.coreos/config,string='%s'",
+		strings.Replace(string(cfgStr), ",", ",,", -1),
+	)
+	req := qemu.CreateRequest{
+		Vmid:   int(machine.Vmid),
+		Args:   proxmox.String(fmt.Sprintf("-fw_cfg %s", fwstr)),
+		Name:   proxmox.String(machine.DisplayName),
+		Node:   machine.Node,
+		Memory: proxmox.Int(int(machine.Memory)),
+		Cores:  proxmox.Int(int(machine.Cpus)),
+		Nets: &qemu.Nets{
+			&qemu.Net{
+				Model:  qemu.NetModel_VIRTIO,
+				Bridge: proxmox.String("vmbr0"),
+				Tag:    proxmox.Int(2),
+			},
+		},
+		Agent: &qemu.Agent{
+			Enabled: *proxmox.PVEBool(true),
+		},
+		Serials: &qemu.Serials{proxmox.String("socket")},
+		Scsis: &qemu.Scsis{
+			&qemu.Scsi{
+				File:       "local:0",
+				ImportFrom: proxmox.String("local:999/fedora-coreos-39.20231119.3.0-qemu.x86_64.qcow2"),
+			},
+		},
+	}
+
+	_, err = c.qemu.Create(context.Background(), req)
+	return err
+}
+
+func (c *Client) PrepareVM(ctx context.Context, machine *v1.Machine) error {
+	err := c.qemu.ResizeVm(context.Background(), qemu.ResizeVmRequest{
+		Disk: "scsi0",
+		Node: machine.Node,
+		Vmid: int(machine.Vmid),
+		Size: fmt.Sprintf("%dG", 64),
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = c.status.VmStart(ctx, status.VmStartRequest{
+		Node: machine.Node,
+		Vmid: int(machine.Vmid),
+	})
+	return err
+}
+
+func (c *Client) StopVM(ctx context.Context, machine *v1.Machine) error {
+	_, err := c.status.VmStop(ctx, status.VmStopRequest{
+		Node: machine.Node,
+		Vmid: int(machine.Vmid),
+	})
+	return err
+}
+
+func (c *Client) DestroyVM(ctx context.Context, machine *v1.Machine) error {
+	_, err := c.qemu.Delete(ctx, qemu.DeleteRequest{
+		Node:                     machine.Node,
+		Vmid:                     int(machine.Vmid),
+		DestroyUnreferencedDisks: proxmox.PVEBool(true),
+		Purge:                    proxmox.PVEBool(true),
+	})
+	return err
 }

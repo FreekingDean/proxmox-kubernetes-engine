@@ -49,6 +49,7 @@ func NewMachinePoolServiceCommand(config aipcli.Config) *cobra.Command {
 				"proxmox_kubernetes_engine.v1.CreateMachinePoolRequest.machine_pool":    "",
 				"proxmox_kubernetes_engine.v1.CreateMachinePoolRequest.machine_pool_id": "",
 				"proxmox_kubernetes_engine.v1.MachinePool.cpus":                         "",
+				"proxmox_kubernetes_engine.v1.MachinePool.display_name":                 "",
 				"proxmox_kubernetes_engine.v1.MachinePool.group":                        "",
 				"proxmox_kubernetes_engine.v1.MachinePool.image":                        "",
 				"proxmox_kubernetes_engine.v1.MachinePool.memory":                       "",
@@ -65,6 +66,7 @@ func NewMachinePoolServiceCommand(config aipcli.Config) *cobra.Command {
 			map[protoreflect.FullName]string{
 				"google.protobuf.FieldMask.paths":                                    " The set of field mask paths.\n",
 				"proxmox_kubernetes_engine.v1.MachinePool.cpus":                      "",
+				"proxmox_kubernetes_engine.v1.MachinePool.display_name":              "",
 				"proxmox_kubernetes_engine.v1.MachinePool.group":                     "",
 				"proxmox_kubernetes_engine.v1.MachinePool.image":                     "",
 				"proxmox_kubernetes_engine.v1.MachinePool.memory":                    "",

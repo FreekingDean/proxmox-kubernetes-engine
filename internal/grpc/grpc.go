@@ -16,11 +16,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
 )
 
-var Module = fx.Module("grpc",
-	fx.Provide(New),
-	fx.Invoke(Run),
-)
-
 type ServerParams struct {
 	fx.In
 
@@ -52,7 +47,7 @@ func Run(lc fx.Lifecycle, s *grpc.Server, lis net.Listener, log logger.Logger) {
 	})
 }
 
-func New(lc fx.Lifecycle, p ServerParams) (*grpc.Server, net.Listener, error) {
+func New(p ServerParams) (*grpc.Server, net.Listener, error) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", p.Config.GRPCPort))
 	if err != nil {
 		return nil, nil, err

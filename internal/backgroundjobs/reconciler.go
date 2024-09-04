@@ -13,7 +13,7 @@ func (s *Service) WaitForJobs() {
 		ctx := context.Background()
 		s.reconcileClusters(ctx)
 		s.reconcileMachinePools(ctx)
-		time.Sleep(1 * time.Second)
+		time.Sleep(10 * time.Second)
 	}
 }
 

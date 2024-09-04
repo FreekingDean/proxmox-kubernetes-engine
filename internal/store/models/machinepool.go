@@ -33,10 +33,11 @@ func (machinePool *MachinePool) ToAPI() (*v1.MachinePool, error) {
 	}
 	name, err := rn.MarshalString()
 	return &v1.MachinePool{
-		Name:   name,
-		Image:  machinePool.Image,
-		Cpus:   int32(machinePool.CPUs),
-		Memory: int32(machinePool.Memory),
-		Group:  machinePool.Group,
+		Name:        name,
+		Image:       machinePool.Image,
+		Cpus:        int32(machinePool.CPUs),
+		Memory:      int32(machinePool.Memory),
+		Group:       machinePool.Group,
+		DisplayName: machinePool.ID,
 	}, err
 }

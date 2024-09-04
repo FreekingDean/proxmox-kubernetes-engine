@@ -39,6 +39,14 @@ func EqualFilter(clauses map[string]interface{}) filterOption {
 	}
 }
 
+func NotEqualFilter(clauses map[string]interface{}) filterOption {
+	return func(sb *sqlbuilder.SelectBuilder) {
+		for k, v := range clauses {
+			sb.Where(sb.NotEqual(k, v))
+		}
+	}
+}
+
 func MachineMachinePoolFilter(rn *v1.MachinePoolResourceName) filterOption {
 	return func(sb *sqlbuilder.SelectBuilder) {
 		sb.Join(

@@ -99,4 +99,5 @@ message Cluster {
   }];
   // IE. k3s-v1.28.5+k3s1
   string kubernetes_version = 2 [ (google.api.field_behavior) = REQUIRED ];
+  string display_name = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
 }

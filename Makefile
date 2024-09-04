@@ -62,6 +62,10 @@ run.server: $(BIN)/proxmox-kubernetes-engine
 run.bgs: $(BIN)/proxmox-kubernetes-engine
 	@ bash -c 'set -o allexport; source .env; set +o allexport; proxmox-kubernetes-engine bgs'
 
+.PHONY: generate
+generate:
+	buf generate $(PROTODIR) --template $(PROTODIR)/buf.gen.yaml
+
 .PHONY: debug
 debug:
 	@ echo protodir: $(PROTODIR)

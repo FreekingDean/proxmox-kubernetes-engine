@@ -48,3 +48,19 @@ func (s *Store) CreateCluster(ctx context.Context, clusterID string, cluster *v1
 	s.logger.Debug(query)
 	return s.Execute(ctx, query, args...)
 }
+
+func (s *Store) FindCluster(ctx context.Context, rn *v1.ClusterResourceName) (*v1.Cluster, error) {
+	cs := sqlbuilder.NewStruct(new(models.Cluster))
+	sb := cs.SelectFrom("clusters")
+	sb.Where(sb.Equal("id", rn.Cluster))
+	query, args := sb.Build()
+	s.logger.Debug(query)
+	s.logger.Trace(fmt.Sprintf("%+v", args))
+	resp := models.Cluster{}
+	err := s.Find(ctx, query, &resp, args...)
+	if err != nil {
+		return nil, fmt.Errorf("error querying cluster %w", err)
+	}
+
+	return resp.ToAPI()
+}

@@ -12,7 +12,8 @@ var Module = fx.Module("config",
 )
 
 type Config struct {
-	GRPCPort int
+	GRPCPort    int
+	GatewayPort int
 
 	ProxmoxHost     string
 	ProxmoxUsername string
@@ -29,6 +30,14 @@ func Parse() (Config, error) {
 	}
 
 	config.GRPCPort = grpcPort
+
+	gatewayPort, err := strconv.Atoi(os.Getenv("GATEWAY_PORT"))
+	if err != nil {
+		return config, err
+	}
+
+	config.GatewayPort = gatewayPort
+
 	config.ProxmoxHost = os.Getenv("PROXMOX_HOST")
 	config.ProxmoxUsername = os.Getenv("PROXMOX_USERNAME")
 	config.ProxmoxPassword = os.Getenv("PROXMOX_PASSWORD")

@@ -6,6 +6,7 @@ import (
 
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/clusters"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/config"
+	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/gateway"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/grpc"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/logger"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/machinepoolassignments"
@@ -30,6 +31,7 @@ func serverCmd() *cobra.Command {
 				fx.Provide(store.New),
 				proxmox.Module,
 				fx.Provide(grpc.New),
+				fx.Provide(gateway.New),
 
 				fx.Provide(clusters.New),
 				fx.Provide(machines.New),
@@ -42,6 +44,7 @@ func serverCmd() *cobra.Command {
 				fx.Invoke(machinepoolassignments.Register),
 
 				fx.Invoke(grpc.Run),
+				fx.Invoke(gateway.Run),
 			)
 			app.Run()
 		},

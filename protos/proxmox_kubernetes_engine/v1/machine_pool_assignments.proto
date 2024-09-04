@@ -114,6 +114,7 @@ message MachinePoolAssignment {
   }];
   Role role = 3 [ (google.api.field_behavior) = REQUIRED ];
   int32 count = 4 [ (google.api.field_behavior) = REQUIRED ];
+  string display_name = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 enum Role {

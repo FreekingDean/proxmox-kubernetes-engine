@@ -80,7 +80,7 @@ func (s *Store) FindMachinePoolAssignment(ctx context.Context, rn *v1.MachinePoo
 	s.logger.Debug(query)
 
 	resp := models.MachinePoolAssignment{}
-	err := s.Select(ctx, query, &resp, args...)
+	err := s.Find(ctx, query, &resp, args...)
 	if err != nil {
 		return nil, err
 	}

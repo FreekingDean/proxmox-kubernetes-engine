@@ -10,6 +10,7 @@ import (
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/logger"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/proxmox"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 type Service struct {
@@ -17,6 +18,7 @@ type Service struct {
 
 	proxmox *proxmox.Client
 	store   *store.Store
+	logger  logger.Logger
 }
 
 type ServiceParams struct {
@@ -27,11 +29,24 @@ type ServiceParams struct {
 	Store   *store.Store
 }
 
-func Register(lc fx.Lifecycle, s *Service, g *grpc.Server) {
+type RegisterParams struct {
+	fx.In
+
+	Service      *Service
+	Server       *grpc.Server
+	Mux          *runtime.ServeMux
+	ServerClient *grpc.ClientConn
+}
+
+func Register(lc fx.Lifecycle, p RegisterParams) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			v1.RegisterMachineServiceServer(g, s)
-			return nil
+			v1.RegisterMachineServiceServer(p.Server, p.Service)
+			return v1.RegisterMachineServiceHandler(
+				ctx,
+				p.Mux,
+				p.ServerClient,
+			)
 		},
 	})
 }
@@ -40,6 +55,7 @@ func New(p ServiceParams) *Service {
 	s := &Service{
 		proxmox: p.Proxmox,
 		store:   p.Store,
+		logger:  p.Logger,
 	}
 
 	return s

@@ -76,14 +76,16 @@ message Machine {
 
   google.protobuf.Timestamp created_at = 10 [ (google.api.field_behavior) = OUTPUT_ONLY ];
   google.protobuf.Timestamp updated_at = 11 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+
+  string display_name = 12 [ (google.api.field_behavior) = OUTPUT_ONLY ];
 }
 
 enum State {
   UNKNOWN = 0;
   STARTING = 1;
-  RUNNING = 2; // Terminal
+  RUNNING = 2;
   STOPPING = 3;
-  STOPPED = 4; // Terminal
+  STOPPED = 4;
   ERROR = 5; // Terminal
   // The machine reconciler has picked up the machine and is attempting
   // to submit the machine to proxmox to create
@@ -96,4 +98,6 @@ enum State {
   // being reconciled on a machine but has not been requested to
   // create on proxmox yet.
   INITIALIZING = 10;
+
+  TO_DESTROY = 11;
 }

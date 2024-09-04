@@ -5,6 +5,7 @@ import (
 
 	v1 "github.com/FreekingDean/proxmox-kubernetes-engine/gen/go/proxmox_kubernetes_engine/v1"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -14,11 +15,24 @@ type Service struct {
 	store *store.Store
 }
 
-func Register(lc fx.Lifecycle, s *Service, g *grpc.Server) {
+type RegisterParams struct {
+	fx.In
+
+	Service      *Service
+	Server       *grpc.Server
+	Mux          *runtime.ServeMux
+	ServerClient *grpc.ClientConn
+}
+
+func Register(lc fx.Lifecycle, p RegisterParams) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			v1.RegisterClusterServiceServer(g, s)
-			return nil
+			v1.RegisterClusterServiceServer(p.Server, p.Service)
+			return v1.RegisterClusterServiceHandler(
+				ctx,
+				p.Mux,
+				p.ServerClient,
+			)
 		},
 	})
 }
@@ -37,4 +51,13 @@ func (s *Service) CreateCluster(ctx context.Context, req *v1.CreateClusterReques
 func (s *Service) ListClusters(ctx context.Context, req *v1.ListClustersRequest) (*v1.ListClustersResponse, error) {
 	clusters, _, err := s.store.ListClusters(ctx)
 	return &v1.ListClustersResponse{Clusters: clusters}, err
+}
+
+func (s *Service) GetCluster(ctx context.Context, req *v1.GetClusterRequest) (*v1.Cluster, error) {
+	rn := &v1.ClusterResourceName{}
+	err := rn.UnmarshalString(req.Name)
+	if err != nil {
+		return nil, err
+	}
+	return s.store.FindCluster(ctx, rn)
 }

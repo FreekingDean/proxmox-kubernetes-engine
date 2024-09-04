@@ -100,4 +100,5 @@ message MachinePool {
   int32 memory = 3 [ (google.api.field_behavior) = REQUIRED ];
   int32 cpus = 4 [ (google.api.field_behavior) = REQUIRED ];
   string group = 5 [ (google.api.field_behavior) = REQUIRED ];
+  string display_name = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
 }

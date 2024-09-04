@@ -18,6 +18,7 @@ type Machine struct {
 	Group  string `db:"group_name"`
 	Role   string `db:"role"`
 	Node   string `db:"node"`
+	VMID   int    `db:"vmid"`
 
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
@@ -42,6 +43,7 @@ func (m *Machine) FromAPI(machine *v1.Machine) error {
 	m.Image = machine.Image
 	m.CreatedAt = machine.CreatedAt.AsTime()
 	m.UpdatedAt = machine.UpdatedAt.AsTime()
+	m.VMID = int(machine.Vmid)
 
 	m.MachinePoolAssignmentID = rn.MachinePoolAssignment
 	return nil
@@ -49,14 +51,17 @@ func (m *Machine) FromAPI(machine *v1.Machine) error {
 
 func (m *Machine) ToAPI() (*v1.Machine, error) {
 	return &v1.Machine{
-		Name:      m.Name,
-		Cpus:      int32(m.CPUs),
-		Memory:    int32(m.Memory),
-		State:     v1.State(v1.State_value[m.State]),
-		Group:     m.Group,
-		Role:      m.Role,
-		Image:     m.Image,
-		CreatedAt: timestamppb.New(m.CreatedAt),
-		UpdatedAt: timestamppb.New(m.UpdatedAt),
+		Name:        m.Name,
+		Cpus:        int32(m.CPUs),
+		Memory:      int32(m.Memory),
+		State:       v1.State(v1.State_value[m.State]),
+		Group:       m.Group,
+		Role:        m.Role,
+		Image:       m.Image,
+		CreatedAt:   timestamppb.New(m.CreatedAt),
+		UpdatedAt:   timestamppb.New(m.UpdatedAt),
+		DisplayName: m.ID,
+		Vmid:        int32(m.VMID),
+		Node:        m.Node,
 	}, nil
 }

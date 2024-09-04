@@ -55,5 +55,6 @@ func (machinePoolAssignment *MachinePoolAssignment) ToAPI() (*v1.MachinePoolAssi
 		MachinePool: mpName,
 		Role:        v1.Role(v1.Role_value[machinePoolAssignment.Role]),
 		Count:       int32(machinePoolAssignment.Count),
+		DisplayName: machinePoolAssignment.ID,
 	}, err
 }

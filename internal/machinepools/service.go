@@ -7,6 +7,7 @@ import (
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/logger"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/machines"
 	"github.com/FreekingDean/proxmox-kubernetes-engine/internal/store"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -27,6 +28,15 @@ type ServiceParams struct {
 	Store          *store.Store
 }
 
+type RegisterParams struct {
+	fx.In
+
+	Service      *Service
+	Server       *grpc.Server
+	Mux          *runtime.ServeMux
+	ServerClient *grpc.ClientConn
+}
+
 func New(p ServiceParams) *Service {
 	return &Service{
 		Logger:         p.Logger,
@@ -35,11 +45,15 @@ func New(p ServiceParams) *Service {
 	}
 }
 
-func Register(lc fx.Lifecycle, s *Service, g *grpc.Server) {
+func Register(lc fx.Lifecycle, p RegisterParams) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			v1.RegisterMachinePoolServiceServer(g, s)
-			return nil
+			v1.RegisterMachinePoolServiceServer(p.Server, p.Service)
+			return v1.RegisterMachinePoolServiceHandler(
+				ctx,
+				p.Mux,
+				p.ServerClient,
+			)
 		},
 	})
 }

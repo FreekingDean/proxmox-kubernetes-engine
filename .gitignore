@@ -1,4 +1,5 @@
 proxmox-kubernetes-engine
 bin/*
 db/*
+!db/.keep
 .env

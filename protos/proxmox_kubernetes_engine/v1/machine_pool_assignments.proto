@@ -30,7 +30,7 @@ service MachinePoolAssignmentService {
     rpc CreateMachinePoolAssignment(CreateMachinePoolAssignmentRequest) returns(MachinePoolAssignment) {
     option (google.api.http) = {
       post: "/v1/{parent=clusters/*}/machinePoolAssignments"
-      body: "machine_pool_assignment"
+      body: "*"
     };
     option (google.api.method_signature) = "parent,machine_pool_assignment,machine_pool_assignment_id";
   }

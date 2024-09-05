@@ -29,7 +29,7 @@ service MachinePoolService {
     rpc CreateMachinePool(CreateMachinePoolRequest) returns(MachinePool) {
     option (google.api.http) = {
       post: "/v1/machinePools"
-      body: "machine_pool"
+      body: "*"
     };
     option (google.api.method_signature) = "machine_pool,machine_pool_id";
   }

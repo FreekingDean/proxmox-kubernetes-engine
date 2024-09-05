@@ -87,7 +87,7 @@ func (s *Service) updateState(ctx context.Context, machine *v1.Machine) error {
 
 func (s *Service) handleToDestroy(ctx context.Context, machine *v1.Machine) error {
 	state, err := s.proxmox.GetVMState(ctx, machine.Node, int(machine.Vmid))
-	if strings.Contains(err.Error(), fmt.Sprintf("Configuration file 'nodes/%s/qemu-server/%d.conf' does not exist", machine.Node, machine.Vmid)) {
+	if err != nil && strings.Contains(err.Error(), fmt.Sprintf("Configuration file 'nodes/%s/qemu-server/%d.conf' does not exist", machine.Node, machine.Vmid)) {
 		machine.State = v1.State_DESTROYED
 		return s.store.UpdateMachine(ctx, machine)
 	}

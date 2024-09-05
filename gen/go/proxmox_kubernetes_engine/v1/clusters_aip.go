@@ -46,9 +46,13 @@ func (n ClusterResourceName) MarshalString() (string, error) {
 }
 
 func (n *ClusterResourceName) UnmarshalString(name string) error {
-	return resourcename.Sscan(
+	err := resourcename.Sscan(
 		name,
 		"clusters/{cluster}",
 		&n.Cluster,
 	)
+	if err != nil {
+		return err
+	}
+	return n.Validate()
 }

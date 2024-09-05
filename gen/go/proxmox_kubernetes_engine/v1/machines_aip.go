@@ -83,13 +83,17 @@ func (n MachineResourceName) MarshalString() (string, error) {
 }
 
 func (n *MachineResourceName) UnmarshalString(name string) error {
-	return resourcename.Sscan(
+	err := resourcename.Sscan(
 		name,
 		"clusters/{cluster}/machinePoolAssignments/{machine_pool_assignment}/machines/{machine}",
 		&n.Cluster,
 		&n.MachinePoolAssignment,
 		&n.Machine,
 	)
+	if err != nil {
+		return err
+	}
+	return n.Validate()
 }
 
 func (n MachineResourceName) ClusterResourceName() ClusterResourceName {

@@ -30,7 +30,7 @@ service ClusterService {
     rpc CreateCluster(CreateClusterRequest) returns(Cluster) {
     option (google.api.http) = {
       post: "/v1/clusters"
-      body: "cluster"
+      body: "*"
     };
     option (google.api.method_signature) = "cluster,cluster_id";
   }

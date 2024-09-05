@@ -119,22 +119,11 @@ func local_request_MachinePoolService_ListMachinePools_0(ctx context.Context, ma
 
 }
 
-var (
-	filter_MachinePoolService_CreateMachinePool_0 = &utilities.DoubleArray{Encoding: map[string]int{"machine_pool": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
 func request_MachinePoolService_CreateMachinePool_0(ctx context.Context, marshaler runtime.Marshaler, client MachinePoolServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CreateMachinePoolRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.MachinePool); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MachinePoolService_CreateMachinePool_0); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -147,14 +136,7 @@ func local_request_MachinePoolService_CreateMachinePool_0(ctx context.Context, m
 	var protoReq CreateMachinePoolRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.MachinePool); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MachinePoolService_CreateMachinePool_0); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -319,6 +301,7 @@ func local_request_MachinePoolService_DeleteMachinePool_0(ctx context.Context, m
 // UnaryRPC     :call MachinePoolServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterMachinePoolServiceHandlerFromEndpoint instead.
+// GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterMachinePoolServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server MachinePoolServiceServer) error {
 
 	mux.Handle("GET", pattern_MachinePoolService_GetMachinePool_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
@@ -452,21 +435,21 @@ func RegisterMachinePoolServiceHandlerServer(ctx context.Context, mux *runtime.S
 // RegisterMachinePoolServiceHandlerFromEndpoint is same as RegisterMachinePoolServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
 func RegisterMachinePoolServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.DialContext(ctx, endpoint, opts...)
+	conn, err := grpc.NewClient(endpoint, opts...)
 	if err != nil {
 		return err
 	}
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 		}()
 	}()
@@ -484,7 +467,7 @@ func RegisterMachinePoolServiceHandler(ctx context.Context, mux *runtime.ServeMu
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "MachinePoolServiceClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "MachinePoolServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "MachinePoolServiceClient" to call the correct interceptors.
+// "MachinePoolServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterMachinePoolServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client MachinePoolServiceClient) error {
 
 	mux.Handle("GET", pattern_MachinePoolService_GetMachinePool_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {

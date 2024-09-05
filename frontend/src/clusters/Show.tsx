@@ -10,7 +10,7 @@ const ShowMachinePoolAssignmentsButton = () => {
     return (
         <Button
             component={Link}
-            to={`/clusters/${cluster?.id}/machinePoolAssignments`}
+            to={`/${cluster?.name}/machinePoolAssignments`}
             startIcon={<UserIcon />}
         >
             Machine Pool Assignments
@@ -22,7 +22,7 @@ export default () => (
   <Show>
     <SimpleShowLayout>
         <TextField source="name" />
-        <TextField source="kubernetes_version" />
+        <TextField source="kubernetesVersion" />
         <ShowMachinePoolAssignmentsButton />
     </SimpleShowLayout>
   </Show>

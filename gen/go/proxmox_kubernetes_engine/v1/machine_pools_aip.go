@@ -46,9 +46,13 @@ func (n MachinePoolResourceName) MarshalString() (string, error) {
 }
 
 func (n *MachinePoolResourceName) UnmarshalString(name string) error {
-	return resourcename.Sscan(
+	err := resourcename.Sscan(
 		name,
 		"machinePools/{machine_pool}",
 		&n.MachinePool,
 	)
+	if err != nil {
+		return err
+	}
+	return n.Validate()
 }

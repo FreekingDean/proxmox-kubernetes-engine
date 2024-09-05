@@ -1,5 +1,7 @@
-import { List, Datagrid, TextField } from 'react-admin';
+import { List, Datagrid, TextField, ListActions } from 'react-admin';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import Empty from '../components/Empty'
 
 export const MachinePoolAssignmentsList = () => {
     const { clusterId } = useParams();
@@ -8,7 +10,7 @@ export const MachinePoolAssignmentsList = () => {
       navigate("/"+record.name)
     }
     return (
-      <List resource="machinePoolAssignments" filter={{ parent: `clusters/${clusterId }`}}>
+      <List resource="machinePoolAssignments" empty={<Empty prefix={`clusters/${clusterId}`}/>} actions={<ListActions hasCreate />} filter={{ parent: `clusters/${clusterId }`}}>
             <Datagrid rowClick={rowClick}>
                 <TextField source="id" />
                 <TextField source="machinePool" />

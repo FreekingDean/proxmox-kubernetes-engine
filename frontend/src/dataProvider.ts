@@ -47,6 +47,21 @@ const getList = (resource, params) => {
   })
 }
 
+const create = (resource, params) => {
+  console.log(params)
+  console.log(resource)
+  return new Promise((resolve, reject) => {
+    call("POST", resource, params).then((data) => {
+      data.id = 0
+      resolve({data: data})
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+const camelToSnakeCase = str => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
 const call = (method, resource, params) => {
   console.log(params)
   console.log(resource)
@@ -54,24 +69,38 @@ const call = (method, resource, params) => {
   if (params.filter != undefined && params.filter.parent != undefined) {
     parentPath = params.filter.parent + "/"
   }
+  if (params.data != undefined && params.data.parent != undefined) {
+    parentPath = params.data.parent + "/"
+  }
   let resourcePath = resource
   if (params.id != undefined) {
     resourcePath += `/${params.id}`
   }
+  console.log(parentPath)
+  console.log(resourcePath)
+  let fetchParams = {
+    method: method,
+    headers: {
+      'content-type': 'application/json',
+    },
+  }
+  if (method === "POST") {
+    const singularResourceName = camelToSnakeCase(resource.replace(/s$/g, ""));
+    let bodyParams = {}
+    bodyParams[singularResourceName + "_id"] = params.data.id
+    bodyParams[singularResourceName] = {...params.data, id: undefined, parent: undefined}
+    fetchParams.body = JSON.stringify(bodyParams)
+  }
   return new Promise((resolve, reject) => {
-    fetch(`${url}/${parentPath}${resourcePath}`, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
-      },
-    }).then((resp) => { return resp.json() }).then((data) => {
-      resolve(data)
-    }).catch((e) => {reject(e)})
+    fetch(`${url}/${parentPath}${resourcePath}`, fetchParams).
+        then((resp) => { return resp.json() }).
+        then((data) => { resolve(data) }).
+        catch((e) => {reject(e)})
   })
 }
 
 export const dataProvider = {
-    create: unimpl,
+    create: create,
     delete: unimpl,
     deleteMany: unimpl,
     getList: getList,

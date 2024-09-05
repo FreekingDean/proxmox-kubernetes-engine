@@ -10,7 +10,7 @@
     "format": "prettier --write ./src"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^1.8.0",
+    "@bufbuild/protobuf": "^2.0.0",
     "ra-data-simple-rest": "^4.16.0",
     "react": "^18.2.0",
     "react-admin": "^4.16.0",
